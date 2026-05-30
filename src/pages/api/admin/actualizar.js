@@ -1,6 +1,6 @@
 import { getSheet } from '../../../lib/supabase'
 
-const API_URL = "https://script.google.com/macros/s/AKfycbz_nju3Y21Y4DGZexvSwpqfvNs6eg6dGXVLvh34qbjKWrOUcN_LggcM-3bGmXYI9wCc1Q/exec"
+const API_URL = "https://script.google.com/macros/s/AKfycbw5lXuqBcUMOm3hSmhsF6fpFGTbuC0Lwld0-9Bhn90_QNJ0m58NQHvAFwzGs2IjZlc-MA/exec"
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
