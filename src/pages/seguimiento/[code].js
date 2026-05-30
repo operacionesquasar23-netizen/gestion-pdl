@@ -278,13 +278,21 @@ export default function Seguimiento({ ticket, historial, code }) {
                     <span className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Archivos adjuntos</span>
                   </div>
                   <div className="px-6 py-4 flex flex-col gap-2">
-                    {files.map((url, i) => (
-                      <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 text-sm text-gray-700 hover:text-blue-700 transition-colors">
-                        📎 <span className="flex-1 truncate">Archivo {i + 1}</span>
-                        <span className="text-gray-400 text-xs">↗</span>
-                      </a>
-                    ))}
+                    {files.map((url, i) => {
+                      const isImage = url.includes('uc?export=view') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
+                      return isImage ? (
+                        <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                          <img src={url} alt={`Imagen ${i + 1}`}
+                            className="w-full rounded-lg border border-gray-100 hover:opacity-90 transition-opacity cursor-pointer" />
+                        </a>
+                      ) : (
+                        <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-2 bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 text-sm text-gray-700 hover:text-blue-700 transition-colors">
+                          📎 <span className="flex-1 truncate">Archivo {i + 1}</span>
+                          <span className="text-gray-400 text-xs">↗</span>
+                        </a>
+                      )
+                    })}
                   </div>
                 </div>
               )}
