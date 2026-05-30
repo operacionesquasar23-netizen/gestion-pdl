@@ -279,7 +279,8 @@ export default function Seguimiento({ ticket, historial, code }) {
                   </div>
                   <div className="px-6 py-4 flex flex-col gap-2">
                     {files.map((url, i) => {
-                      const isImage = url.includes('uc?export=view') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
+                      console.log('url archivo:', url)
+                      const isImage = url.includes('uc?export=view') || url.includes('thumbnail') || url.includes('lh3.google') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
                       return isImage ? (
                         <a key={i} href={url} target="_blank" rel="noopener noreferrer">
                           <img src={`/api/imagen?url=${encodeURIComponent(url)}`} alt={`Imagen ${i + 1}`}
