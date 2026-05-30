@@ -41,6 +41,7 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [turno, setTurno] = useState(ticket.Turno || '')
   const [saving, setSaving] = useState(false)
   const [evidencias, setEvidencias] = useState([])
+  const [evidenciaLinks, setEvidenciaLinks] = useState(ticket.Evidencias || '')
 
   const handleSave = async () => {
     setSaving(true)
