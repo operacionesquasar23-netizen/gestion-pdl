@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       '',                   // FechaCierre
       '',                   // Responsable
       fileLinks,            // DatosAdjuntos
-      imageLinks            // ImageLinks
+      ''                    // Evidencias
     ])
 
     await appendRow('Historial', [
