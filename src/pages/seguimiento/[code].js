@@ -282,7 +282,7 @@ export default function Seguimiento({ ticket, historial, code }) {
                       const isImage = url.includes('uc?export=view') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
                       return isImage ? (
                         <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-                          <img src={url} alt={`Imagen ${i + 1}`}
+                          <img src={`/api/imagen?url=${encodeURIComponent(url)}`} alt={`Imagen ${i + 1}`}
                             className="w-full rounded-lg border border-gray-100 hover:opacity-90 transition-opacity cursor-pointer" />
                         </a>
                       ) : (
