@@ -212,33 +212,53 @@ function Modal({ ticket, onClose, onUpdate }) {
               <p className="text-xs text-gray-400 mt-1">{evidencias.length} archivo(s) seleccionado(s)</p>
             )}
           </div>
-          {files.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Archivos adjuntos</p>
-              {(ticket.Evidencias || evidenciaLinks) && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Evidencias del proveedor</p>
-                  <div className="flex flex-col gap-2">
-                    {(ticket.Evidencias || evidenciaLinks).split(',').map((url, i) => {
-                      url = url.trim()
-                      if (!url) return null
-                      const isImage = url.includes('drive.google.com') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
-                      return isImage ? (
-                        <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-                          <img src={`/api/imagen?url=${encodeURIComponent(url)}`} alt={`Evidencia ${i + 1}`}
-                            className="w-full rounded-lg border border-gray-100 hover:opacity-90 transition-opacity cursor-pointer" />
-                        </a>
-                      ) : (
-                        <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-2 bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 text-sm text-gray-700 hover:text-blue-700 transition-colors">
-                          📎 <span className="flex-1 truncate">Evidencia {i + 1}</span>
-                          <span className="text-gray-400 text-xs">↗</span>
-                        </a>
-                      )
-                    })}
-                  </div>
+            {files.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Archivos adjuntos</p>
+                <div className="flex flex-col gap-2">
+                  {files.map((url, i) => {
+                    const isImage = url.includes('drive.google.com') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
+                    return isImage ? (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                        <img src={`/api/imagen?url=${encodeURIComponent(url)}`} alt={`Archivo ${i + 1}`}
+                          className="w-full rounded-lg border border-gray-100 hover:opacity-90 transition-opacity cursor-pointer" />
+                      </a>
+                    ) : (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2 bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 text-sm text-gray-700 hover:text-blue-700 transition-colors">
+                        📎 <span className="flex-1 truncate">Archivo {i + 1}</span>
+                        <span className="text-gray-400 text-xs">↗</span>
+                      </a>
+                    )
+                  })}
                 </div>
-              )}
+              </div>
+            )}
+
+            {(ticket.Evidencias || evidenciaLinks) && (
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Evidencias del proveedor</p>
+                <div className="flex flex-col gap-2">
+                  {(ticket.Evidencias || evidenciaLinks).split(',').map((url, i) => {
+                    url = url.trim()
+                    if (!url) return null
+                    const isImage = url.includes('drive.google.com') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
+                    return isImage ? (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                        <img src={`/api/imagen?url=${encodeURIComponent(url)}`} alt={`Evidencia ${i + 1}`}
+                          className="w-full rounded-lg border border-gray-100 hover:opacity-90 transition-opacity cursor-pointer" />
+                      </a>
+                    ) : (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2 bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 text-sm text-gray-700 hover:text-blue-700 transition-colors">
+                        📎 <span className="flex-1 truncate">Evidencia {i + 1}</span>
+                        <span className="text-gray-400 text-xs">↗</span>
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
               <div className="flex flex-col gap-2">
                 {files.map((url, i) => {
                   const isImage = url.includes('uc?export=view') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
