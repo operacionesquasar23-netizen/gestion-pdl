@@ -20,15 +20,19 @@ export default async function handler(req, res) {
 
     // Subir archivos a Google Drive
     let fileLinks = ''
+    let imageLinks = ''
     if (files && files.length > 0) {
-      console.log('intentando subir archivo:', files[0].name)
       const urls = []
+      const images = []
       for (const file of files) {
         const result = await uploadFile(code, file.name, file.mimeType, file.data)
-        console.log('resultado upload:', JSON.stringify(result))
-        if (result?.url) urls.push(result.url)
+        if (result?.url) {
+          urls.push(result.url)
+          if (result.isImage) images.push(result.url)
+        }
       }
       fileLinks = urls.join(', ')
+      imageLinks = images.join(', ')
     }
 
     await appendRow('Solicitudes', [
@@ -54,7 +58,8 @@ export default async function handler(req, res) {
       '',                   // Observaciones
       '',                   // FechaCierre
       '',                   // Responsable
-      fileLinks             // DatosAdjuntos
+      fileLinks,            // DatosAdjuntos
+      imageLinks            // ImageLinks
     ])
 
     await appendRow('Historial', [

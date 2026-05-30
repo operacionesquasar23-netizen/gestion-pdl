@@ -32,6 +32,7 @@ export default function NuevaSolicitud() {
   const [files, setFiles] = useState([])
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(null)
+  const [successData, setSuccessData] = useState({})
   const [error, setError] = useState('')
 
   const onDrop = useCallback(accepted => {
@@ -81,6 +82,7 @@ export default function NuevaSolicitud() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Error al enviar')
       setSuccess(data.code)
+      setSuccessData(form)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -102,7 +104,11 @@ export default function NuevaSolicitud() {
           className="block w-full bg-blue-700 hover:bg-blue-800 text-white rounded-xl py-3 text-sm font-semibold transition-colors mb-3">
           Ver estado de mi solicitud →
         </a>
-        <button onClick={() => { setSuccess(null); setForm({ cliente:'', cod:'', marca:'', campana:'', elemento:'', tienda:'', tipoSolicitud:'', descripcion:'', ejecutivo:'' }); setFiles([]) }}
+        <a href={`mailto:paul.najarro@quasar-btl.pe?subject=REQUERIMIENTO DE ${successData.tipoSolicitud} - ${successData.asunto}&body=Buen día Estimado,%0D%0A%0D%0ATipo de requerimiento: ${successData.tipoSolicitud}%0D%0AElemento: ${successData.elemento}%0D%0AMarca: ${successData.marca}%0D%0ACOD: ${successData.cod}%0D%0ATienda: ${successData.tienda}%0D%0ADescripción: ${successData.descripcion}%0D%0A%0D%0AArchivos adjuntos en el sistema:%0D%0Ahttps://gestion-pdl.vercel.app/seguimiento/${success}`}
+          className="block w-full bg-green-600 hover:bg-green-700 text-white rounded-xl py-3 text-sm font-semibold transition-colors mb-3">
+          📧 Enviar correo a Operaciones
+        </a>
+        <button onClick={() => { setSuccess(null); setForm({ asunto:'', cliente:'', cod:'', marca:'', campana:'', elemento:'', tienda:'', tipoSolicitud:'', descripcion:'', ejecutivo:'' }); setFiles([]) }}
           className="text-sm text-gray-400 hover:text-gray-600">
           Enviar otra solicitud
         </button>
