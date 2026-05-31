@@ -279,6 +279,13 @@ function Modal({ ticket, onClose, onUpdate }) {
             </div>
           )}
 
+          {/* Correo de status */}
+
+            href={`mailto:?subject=${encodeURIComponent(ticket.Asunto)}&body=${encodeURIComponent(`Buen día estimado,\n\nSu requerimiento se encuentra actualmente en: "${nuevoEstado}"\n\nPuede ver el detalle completo en:\nhttps://gestion-pdl.vercel.app/seguimiento/${ticket.TicketID}`)}`}
+            className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
+            📧 Enviar correo de status
+          </a>
+
           {/* Link seguimiento */}
           <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-4 py-3">
             <span className="text-xs text-gray-400 flex-1 truncate">
