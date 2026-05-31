@@ -4,10 +4,22 @@ import Image from 'next/image'
 
 export default function Home() {
   const [codigo, setCodigo] = useState('')
+  const [cod, setCod] = useState('')
+  const [buscandoCod, setBuscandoCod] = useState(false)
+  const [resultadosCod, setResultadosCod] = useState([])
 
   const handleSeguimiento = () => {
     if (!codigo.trim()) return
     window.location.href = `/seguimiento/${codigo.trim().toUpperCase()}`
+  }
+
+  const handleBuscarCod = async () => {
+    if (!cod.trim()) return
+    setBuscandoCod(true)
+    const res = await fetch(`/api/buscar?cod=${encodeURIComponent(cod.trim())}`)
+    const data = await res.json()
+    setResultadosCod(data.tickets || [])
+    setBuscandoCod(false)
   }
 
   return (
@@ -59,19 +71,59 @@ export default function Home() {
                 🔍
               </div>
               <h3 className="text-base font-semibold text-gray-900 mb-1">Seguimiento</h3>
-              <p className="text-sm text-gray-500 mb-4">Consulta el estado de tu solicitud con el código de ticket.</p>
-              <div className="flex gap-2">
-                <input
-                  value={codigo}
-                  onChange={e => setCodigo(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSeguimiento()}
-                  placeholder="Ej: PDL-MPQFSEL3"
-                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button onClick={handleSeguimiento}
-                  className="bg-blue-700 hover:bg-blue-800 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors">
-                  Buscar
-                </button>
+              <p className="text-sm text-gray-500 mb-4">Consulta el estado de tu solicitud.</p>
+              
+              <div className="flex flex-col gap-3">
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Por código de ticket</p>
+                  <div className="flex gap-2">
+                    <input
+                      value={codigo}
+                      onChange={e => setCodigo(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleSeguimiento()}
+                      placeholder="Ej: PDL-MPQFSEL3"
+                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button onClick={handleSeguimiento}
+                      className="bg-blue-700 hover:bg-blue-800 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors">
+                      Buscar
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Por COD de campaña</p>
+                  <div className="flex gap-2">
+                    <input
+                      value={cod}
+                      onChange={e => setCod(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleBuscarCod()}
+                      placeholder="Ej: 12345"
+                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button onClick={handleBuscarCod}
+                      className="bg-blue-700 hover:bg-blue-800 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-colors">
+                      Buscar
+                    </button>
+                  </div>
+                  {buscandoCod && <p className="text-xs text-gray-400 mt-2">Buscando...</p>}
+                  {resultadosCod.length > 0 && (
+                    <div className="mt-3 flex flex-col gap-2">
+                      {resultadosCod.map((t, i) => (
+                        <a key={i} href={`/seguimiento/${t.TicketID}`}
+                          className="flex items-center justify-between bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 transition-colors">
+                          <div>
+                            <p className="text-xs font-medium text-gray-900">{t.Asunto}</p>
+                            <p className="text-xs text-gray-400">{t.Tienda} · {t.TicketID}</p>
+                          </div>
+                          <span className="text-xs text-blue-600">Ver →</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  {resultadosCod.length === 0 && cod && !buscandoCod && (
+                    <p className="text-xs text-red-400 mt-2">No se encontraron solicitudes con ese COD</p>
+                  )}
+                </div>
               </div>
             </div>
 
