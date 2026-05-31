@@ -281,7 +281,7 @@ function Modal({ ticket, onClose, onUpdate }) {
 
           {/* Correo de status */}
 
-            href={`mailto:?subject=${encodeURIComponent(ticket.Asunto)}&body=${encodeURIComponent(`Buen día estimado,\n\nSu requerimiento se encuentra actualmente en: "${nuevoEstado}"\n\nPuede ver el detalle completo en:\nhttps://gestion-pdl.vercel.app/seguimiento/${ticket.TicketID}`)}`}
+            href={`mailto:?subject=${encodeURIComponent(ticket.Asunto)}&body=${encodeURIComponent('Buen día estimado,\n\nSu requerimiento se encuentra actualmente en: "' + nuevoEstado + '"\n\nPuede ver el detalle completo en:\nhttps://gestion-pdl.vercel.app/seguimiento/' + ticket.TicketID)}`}
             className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
             📧 Enviar correo de status
           </a>
