@@ -15,7 +15,7 @@ const ESTADOS = [
   { id: 'Cerrado',                 color: 'bg-green-100 text-green-800' },
 ]
 
-const ADMIN_PIN = '1234'
+const ADMIN_PIN = 'op01'
 
 function Badge({ estado }) {
   const e = ESTADOS.find(x => x.id === estado) || { color: 'bg-gray-100 text-gray-600' }
