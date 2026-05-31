@@ -63,6 +63,8 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [saving, setSaving] = useState(false)
   const [evidencias, setEvidencias] = useState([])
   const [evidenciaLinks, setEvidenciaLinks] = useState(ticket.Evidencias || '')
+  const [docsProveedor, setDocsProveedor] = useState(ticket.DocsProveedor || '')
+  const [nuevosDocsProveedor, setNuevosDocsProveedor] = useState([])
 
   const files = ticket.DatosAdjuntos
     ? ticket.DatosAdjuntos.split(',').map(f => f.trim()).filter(Boolean)
@@ -103,6 +105,34 @@ function Modal({ ticket, onClose, onUpdate }) {
       setEvidenciaLinks(newEvidenciaLinks)
     }
 
+    let newDocsProveedor = docsProveedor
+    if (nuevosDocsProveedor.length > 0) {
+      const nuevosLinks = await Promise.all(nuevosDocsProveedor.map(file =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = async () => {
+            const res = await fetch('/api/admin/subirevidencia', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ticketId: ticket.TicketID,
+                fileName: `doc_${file.name}`,
+                mimeType: file.type,
+                data: reader.result.split(',')[1]
+              })
+            })
+            const data = await res.json()
+            resolve(data.url || '')
+          }
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+      ))
+      const links = nuevosLinks.filter(Boolean).join(', ')
+      newDocsProveedor = newDocsProveedor ? `${newDocsProveedor}, ${links}` : links
+      setDocsProveedor(newDocsProveedor)
+    }
+
     await onUpdate(ticket, {
       Estado: nuevoEstado,
       Observaciones: observaciones,
@@ -114,7 +144,8 @@ function Modal({ ticket, onClose, onUpdate }) {
       Proveedor: proveedor,
       NroCotizacion: nroCotizacion,
       MontoCotizacion: montoCotizacion,
-      Evidencias: newEvidenciaLinks
+      Evidencias: newEvidenciaLinks,
+      DocsProveedor: newDocsProveedor,
     })
     setSaving(false)
     onClose()
@@ -266,6 +297,38 @@ function Modal({ ticket, onClose, onUpdate }) {
               </div>
             </div>
           )}
+
+          {/* Documentos del proveedor */}
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Documentos del proveedor</p>
+            <input type="file" multiple accept="image/*,.pdf"
+              onChange={e => setNuevosDocsProveedor(Array.from(e.target.files))}
+              className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+            {nuevosDocsProveedor.length > 0 && (
+              <p className="text-xs text-gray-400 mt-1">{nuevosDocsProveedor.length} archivo(s) seleccionado(s)</p>
+            )}
+            {docsProveedor && (
+              <div className="flex flex-col gap-2 mt-2">
+                {docsProveedor.split(',').map((url, i) => {
+                  url = url.trim()
+                  if (!url) return null
+                  const isImage = url.includes('drive.google.com') || url.match(/\.(jpg|jpeg|png|gif|webp)/i)
+                  return isImage ? (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                      <img src={`/api/imagen?url=${encodeURIComponent(url)}`} alt={`Doc ${i + 1}`}
+                        className="w-full rounded-lg border border-gray-100 hover:opacity-90 transition-opacity cursor-pointer" />
+                    </a>
+                  ) : (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 text-sm text-gray-700 hover:text-blue-700 transition-colors">
+                      📎 <span className="flex-1 truncate">Documento {i + 1}</span>
+                      <span className="text-gray-400 text-xs">↗</span>
+                    </a>
+                  )
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Evidencias del proveedor */}
           {evidenciaFiles.length > 0 && (
