@@ -157,6 +157,9 @@ export default function Seguimiento({ ticket, historial, code }) {
                     ['Campaña', ticket.Campaña],
                     ['Elemento', ticket.Elemento],
                     ['COD', ticket.COD],
+                    ['Fecha Requerimiento', ticket.FechaRequerimiento],
+                    ...(ticket.NroCotizacion ? [['N° Cotización', ticket.NroCotizacion]] : []),
+                    ...(ticket.MontoCotizacion ? [['Monto aprobado', `S/ ${ticket.MontoCotizacion}`]] : []),
                   ].map(([lbl, val]) => val ? (
                     <div key={lbl}>
                       <p className="text-xs text-gray-400 mb-0.5">{lbl}</p>
