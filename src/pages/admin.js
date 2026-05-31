@@ -51,6 +51,8 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [prioridad, setPrioridad] = useState(ticket.Prioridad || '')
   const [responsable, setResponsable] = useState(ticket.Responsable || '')
   const [proveedor, setProveedor] = useState(ticket.Proveedor || '')
+  const [nroCotizacion, setNroCotizacion] = useState(ticket.NroCotizacion || '')
+  const [montoCotizacion, setMontoCotizacion] = useState(ticket.MontoCotizacion || '')
   const [fechaVisita, setFechaVisita] = useState(
     ticket.FechaVisita ? ticket.FechaVisita.split('T')[0].split('/').reverse().join('-') : ''
   )
@@ -110,6 +112,8 @@ function Modal({ ticket, onClose, onUpdate }) {
       FechaHabilitacion: fechaHabilitacion,
       Turno: turno,
       Proveedor: proveedor,
+      NroCotizacion: nroCotizacion,
+      MontoCotizacion: montoCotizacion,
       Evidencias: newEvidenciaLinks
     })
     setSaving(false)
@@ -142,6 +146,8 @@ function Modal({ ticket, onClose, onUpdate }) {
               ['Elemento', ticket.Elemento],
               ['COD', ticket.COD],
               ['Fecha Requerimiento', ticket.FechaRequerimiento],
+              ['N° Cotización', ticket.NroCotizacion],
+              ['Monto Cotización', ticket.MontoCotizacion ? `S/ ${ticket.MontoCotizacion}` : '—'],
             ].map(([lbl, val]) => (
               <div key={lbl}>
                 <p className="text-xs text-gray-400 mb-0.5">{lbl}</p>
@@ -181,6 +187,18 @@ function Modal({ ticket, onClose, onUpdate }) {
                 <label className="block text-xs text-gray-600 mb-1">Responsable</label>
                 <input value={responsable} onChange={e => setResponsable(e.target.value)}
                   placeholder="Nombre del responsable"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">N° Cotización</label>
+                <input value={nroCotizacion} onChange={e => setNroCotizacion(e.target.value)}
+                  placeholder="Ej: COT-001"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Monto Cotización (S/)</label>
+                <input value={montoCotizacion} onChange={e => setMontoCotizacion(e.target.value)}
+                  type="number" placeholder="Ej: 2500"
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
