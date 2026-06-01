@@ -142,6 +142,16 @@ export default function Dashboard() {
     color: '#6366F1'
   })).sort((a, b) => b.value - a.value).slice(0, 8)
 
+  // Por cliente
+  const clientes = [...new Set(ticketsMes.map(t => t.Cliente).filter(Boolean))]
+  const porCliente = clientes.map(c => ({
+    label: c,
+    value: ticketsMes.filter(x => x.Cliente === c).length,
+    color: '#F59E0B'
+  })).sort((a, b) => b.value - a.value).slice(0, 8)
+
+  const maxCliente = Math.max(...porCliente.map(e => e.value), 1)
+
   // Por proveedor
   const porProveedor = ['CARZE', 'MPESSAC'].map(p => ({
     label: p,
@@ -246,6 +256,15 @@ export default function Dashboard() {
                   {porTienda.length === 0
                     ? <p className="text-sm text-gray-400 text-center py-4">Sin datos este mes</p>
                     : <BarChart data={porTienda} maxValue={maxTienda} />
+                  }
+                </div>
+
+                {/* Por cliente */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <h2 className="text-sm font-semibold text-gray-700 mb-4">🏢 Por cliente</h2>
+                  {porCliente.length === 0
+                    ? <p className="text-sm text-gray-400 text-center py-4">Sin datos este mes</p>
+                    : <BarChart data={porCliente} maxValue={maxCliente} />
                   }
                 </div>
 
