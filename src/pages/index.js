@@ -49,8 +49,8 @@ export default function Home() {
         </div>
 
         {/* Cards */}
-        <div className="max-w-5xl mx-auto px-4 -mt-8 pb-12 w-full">
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="max-w-7xl mx-auto px-4 -mt-8 pb-12 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             {/* Nueva Solicitud */}
             <a href="/nueva-solicitud"
