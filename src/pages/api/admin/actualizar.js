@@ -16,6 +16,15 @@ export default async function handler(req, res) {
     const headers = rows[0]
     const rowIndex = rows.findIndex((row, i) => i > 0 && row[1] === ticketId)
 
+    // Si el estado es Cerrado, agregar FechaCierre automáticamente
+    if (updates.Estado === 'Cerrado') {
+      const now2 = new Date().toLocaleDateString('es-PE', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      })
+      updates.FechaCierre = now2
+    }
+
     if (rowIndex === -1) return res.status(404).json({ error: 'Ticket no encontrado' })
 
     // Actualizar los campos correspondientes
