@@ -140,8 +140,6 @@ export default function Home() {
               </span>
             </a>
 
-          </div>
-
           {/* Dashboard */}
           <a href="/dashboard"
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all hover:-translate-y-0.5 group">
@@ -154,6 +152,8 @@ export default function Home() {
               Ver métricas →
             </span>
           </a>        
+
+        </div>
 
           {/* Stats o info adicional */}
           <div className="mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm px-8 py-6">
