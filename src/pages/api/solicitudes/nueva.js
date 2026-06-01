@@ -13,7 +13,8 @@ export default async function handler(req, res) {
     }
 
     const code = generateCode()
-    const now = new Date().toLocaleDateString('es-PE', {
+    const now = new Date().toLocaleString('es-PE', {
+      timeZone: 'America/Lima',
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     })

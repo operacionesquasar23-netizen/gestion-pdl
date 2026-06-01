@@ -19,6 +19,7 @@ export default async function handler(req, res) {
     // Si el estado es Cerrado, agregar FechaCierre automáticamente
     if (updates.Estado === 'Cerrado') {
       const now2 = new Date().toLocaleDateString('es-PE', {
+        timeZone: 'America/Lima',
         day: '2-digit', month: '2-digit', year: 'numeric',
         hour: '2-digit', minute: '2-digit'
       })
@@ -49,7 +50,8 @@ export default async function handler(req, res) {
     const data = await updateRes.json()
 
     // Registrar en historial
-    const now = new Date().toLocaleDateString('es-PE', {
+    const now = new Date().toLocaleString('es-PE', {
+      timeZone: 'America/Lima',
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     })
