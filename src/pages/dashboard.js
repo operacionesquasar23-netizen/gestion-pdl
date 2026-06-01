@@ -166,11 +166,22 @@ export default function Dashboard() {
   }, 0)
 
   // Tiempo promedio de atención
+  const parseFecha = (str) => {
+    if (!str) return null
+    const parts = str.split('/').map(p => p.trim())
+    if (parts.length < 3) return null
+    const day = parseInt(parts[0])
+    const month = parseInt(parts[1]) - 1
+    const year = parseInt(parts[2].split(',')[0].split(' ')[0])
+    return new Date(year, month, day)
+  }
+
   const cerrados = ticketsMes.filter(t => t.Estado === 'Cerrado' && t.FechaCierre && t.FechaRequerimiento)
   const tiempoPromedio = cerrados.length > 0
     ? Math.round(cerrados.reduce((sum, t) => {
-        const inicio = new Date(t.FechaRequerimiento.split('/').reverse().join('-'))
-        const fin = new Date(t.FechaCierre.split('/').reverse().join('-'))
+        const inicio = parseFecha(t.FechaRequerimiento)
+        const fin = parseFecha(t.FechaCierre)
+        if (!inicio || !fin) return sum
         return sum + Math.max(0, (fin - inicio) / (1000 * 60 * 60 * 24))
       }, 0) / cerrados.length)
     : null
