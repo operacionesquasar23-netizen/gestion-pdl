@@ -52,6 +52,8 @@ export default async function handler(req, res) {
       ejecutivo,            // Ejecutivo
       'Pendiente revisión', // Estado
       '',                   // Proveedor
+      '',                   // NroCotizacion
+      '',                   // MontoCotizacion
       '',                   // FechaVisita
       '',                   // FechaHabilitacion
       '',                   // Turno
@@ -60,7 +62,8 @@ export default async function handler(req, res) {
       '',                   // FechaCierre
       '',                   // Responsable
       fileLinks,            // DatosAdjuntos
-      ''                    // Evidencias
+      '',                   // Evidencias
+      ''                    // DocsProveedor
     ])
 
     await appendRow('Historial', [
