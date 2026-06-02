@@ -40,10 +40,11 @@ export default function NuevaSolicitud() {
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    maxSize: MAX_MB * 1024 * 1024,
-    accept: { 'image/*': [], 'application/pdf': [] }
-  })
+      onDrop,
+      maxSize: MAX_MB * 1024 * 1024,
+      multiple: true,
+      accept: { 'image/*': [], 'application/pdf': [] }
+    })
 
   const removeFile = i => setFiles(f => f.filter((_, idx) => idx !== i))
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
