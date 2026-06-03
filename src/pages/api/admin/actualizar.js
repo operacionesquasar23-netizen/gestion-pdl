@@ -9,51 +9,45 @@ export default async function handler(req, res) {
     const { ticketId, updates } = req.body
     if (!ticketId) return res.status(400).json({ error: 'Falta ticketId' })
 
-    // Obtener todas las filas para encontrar la fila del ticket
+    const now = new Date().toLocaleString('es-PE', {
+      timeZone: 'America/Lima',
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    })
+
+    // Si el estado es Cerrado, agregar FechaCierre automáticamente
+    if (updates.Estado === 'Cerrado') {
+      updates.FechaCierre = now
+    }
+
+    // Guardar fecha del ultimo cambio de estado
+    if (updates.Estado) {
+      updates.FechaUltimoEstado = now
+    }
+
     const rows = await getSheet('Solicitudes')
     if (rows.length === 0) return res.status(404).json({ error: 'No hay datos' })
 
     const headers = rows[0]
     const rowIndex = rows.findIndex((row, i) => i > 0 && row[1] === ticketId)
 
-    // Si el estado es Cerrado, agregar FechaCierre automáticamente
-    if (updates.Estado === 'Cerrado') {
-      const now2 = new Date().toLocaleDateString('es-PE', {
-        timeZone: 'America/Lima',
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      })
-      updates.FechaCierre = now2
-    }
-
     if (rowIndex === -1) return res.status(404).json({ error: 'Ticket no encontrado' })
 
-    // Actualizar los campos correspondientes
     const row = [...rows[rowIndex]]
     Object.entries(updates).forEach(([key, value]) => {
       const colIndex = headers.indexOf(key)
       if (colIndex !== -1) row[colIndex] = value
     })
 
-    // Enviar actualización al Apps Script
-    const updateRes = await fetch(API_URL, {
+    await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'update',
         sheet: 'Solicitudes',
-        row: rowIndex + 1, // +1 porque Sheets es 1-indexed
+        row: rowIndex + 1,
         values: row
       })
-    })
-
-    const data = await updateRes.json()
-
-    // Registrar en historial
-    const now = new Date().toLocaleString('es-PE', {
-      timeZone: 'America/Lima',
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
     })
 
     await fetch(API_URL, {
