@@ -8,13 +8,39 @@ const DIAS_SEMANA = ['Lu','Ma','Mi','Ju','Vi','Sa','Do']
 
 function parseFecha(str) {
   if (!str) return null
-  const parts = str.split('/').map(p => p.trim())
-  if (parts.length < 3) return null
-  const day = parseInt(parts[0])
-  const month = parseInt(parts[1]) - 1
-  const year = parseInt(parts[2].split(',')[0].split(' ')[0])
-  if (isNaN(day) || isNaN(month) || isNaN(year)) return null
-  return new Date(year, month, day)
+  str = str.trim()
+  
+  // Formato ISO: 2026-05-21T05:00:00.000Z
+  if (str.includes('T')) {
+    const d = new Date(str)
+    if (!isNaN(d)) return new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  }
+  
+  // Formato DD/MM/YYYY
+  if (str.includes('/')) {
+    const parts = str.split('/').map(p => p.trim())
+    if (parts.length >= 3) {
+      const day = parseInt(parts[0])
+      const month = parseInt(parts[1]) - 1
+      const year = parseInt(parts[2].split(',')[0].split(' ')[0])
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) return new Date(year, month, day)
+    }
+  }
+
+  // Formato D-MMM-YY
+  if (str.includes('-')) {
+    const meses = { 'ene':0,'feb':1,'mar':2,'abr':3,'may':4,'jun':5,'jul':6,'ago':7,'sep':8,'oct':9,'nov':10,'dic':11 }
+    const parts = str.split('-')
+    if (parts.length === 3) {
+      const day = parseInt(parts[0])
+      const month = meses[parts[1].toLowerCase()]
+      let year = parseInt(parts[2])
+      if (year < 100) year += 2000
+      if (!isNaN(day) && month !== undefined && !isNaN(year)) return new Date(year, month, day)
+    }
+  }
+
+  return null
 }
 
 function isSameDay(d1, d2) {
@@ -65,6 +91,7 @@ export default function Calendario() {
     if (!fecha) return { visitas: [], habilitaciones: [] }
     const visitas = tickets.filter(t => {
       const fv = parseFecha(t.FechaVisita)
+      console.log('FechaVisita:', t.FechaVisita, '→', fv)
       return fv && isSameDay(fv, fecha)
     })
     const habilitaciones = tickets.filter(t => {
