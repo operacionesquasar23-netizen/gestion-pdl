@@ -17,6 +17,19 @@ const ESTADOS = [
 
 const ADMIN_PIN = 'op01'
 
+function diasEnEstado(fechaUltimoEstado) {
+  if (!fechaUltimoEstado) return null
+  const parts = fechaUltimoEstado.split('/').map(p => p.trim())
+  if (parts.length < 3) return null
+  const day = parseInt(parts[0])
+  const month = parseInt(parts[1]) - 1
+  const year = parseInt(parts[2].split(',')[0].split(' ')[0])
+  const fecha = new Date(year, month, day)
+  const hoy = new Date()
+  const diff = Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24))
+  return diff
+}
+
 function Badge({ estado }) {
   const e = ESTADOS.find(x => x.id === estado) || { color: 'bg-gray-100 text-gray-600' }
   return (
@@ -515,7 +528,7 @@ export default function Admin() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
-                    {['Ticket','Asunto','Cliente','Tienda','Ejecutivo','Tipo','Estado','Fecha','Archivos',''].map(h => (
+                    {['Ticket','Asunto','Cliente','Tienda','Ejecutivo','Tipo','Estado','Días','Fecha','Archivos',''].map(h => (
                       <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">{h}</th>
                     ))}
                   </tr>
@@ -530,6 +543,14 @@ export default function Admin() {
                       <td className="px-4 py-3 text-gray-700">{t.Ejecutivo}</td>
                       <td className="px-4 py-3 text-gray-700">{t.TipoSolicitud}</td>
                       <td className="px-4 py-3"><Badge estado={t.Estado} /></td>
+                      <td className="px-4 py-3">
+                        {(() => {
+                          const dias = diasEnEstado(t.FechaUltimoEstado)
+                          if (dias === null) return <span className="text-gray-300">—</span>
+                          const color = dias > 7 ? 'text-red-600 font-bold' : dias > 3 ? 'text-amber-500 font-medium' : 'text-green-600'
+                          return <span className={`text-xs ${color}`}>{dias}d</span>
+                        })()}
+                      </td>
                       <td className="px-4 py-3 text-xs text-gray-400">{t.FechaRequerimiento}</td>
                       <td className="px-4 py-3 text-xs text-gray-400">
                         {t.DatosAdjuntos ? `📎 ${t.DatosAdjuntos.split(',').filter(Boolean).length}` : '—'}
