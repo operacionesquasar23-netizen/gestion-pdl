@@ -91,8 +91,9 @@ export default function Calendario() {
     if (!fecha) return { visitas: [], habilitaciones: [] }
     const visitas = tickets.filter(t => {
       const fv = parseFecha(t.FechaVisita)
-      console.log('FechaVisita:', t.FechaVisita, '→', fv)
-      return fv && isSameDay(fv, fecha)
+      const fh = parseFecha(t.FechaHabilitacion)
+      // Solo mostrar visita si NO tiene fecha de habilitación programada
+      return fv && isSameDay(fv, fecha) && !fh
     })
     const habilitaciones = tickets.filter(t => {
       const fh = parseFecha(t.FechaHabilitacion)
