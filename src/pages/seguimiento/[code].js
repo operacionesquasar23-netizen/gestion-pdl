@@ -12,6 +12,9 @@ const ESTADOS = [
   { id: 'Habilitación programada', icon: '🗓️', done: false },
   { id: 'Habilitación realizada',  icon: '🔧', done: false },
   { id: 'Evidencias recibidas',    icon: '📸', done: false },
+  { id: 'OC solicitada',           icon: '📄', done: false },
+  { id: 'Factura recibida',        icon: '🧾', done: false },
+  { id: 'Factura y OC entregadas', icon: '✔️', done: false },
   { id: 'Cerrado',                 icon: '🎉', done: false },
 ]
 
@@ -24,6 +27,9 @@ const ESTADOS_LINEALES = [
   'Habilitación programada',
   'Habilitación realizada',
   'Evidencias recibidas',
+  'OC solicitada',
+  'Factura recibida',
+  'Factura y OC entregadas',
   'Cerrado',
 ]
 

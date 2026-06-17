@@ -12,6 +12,9 @@ const ESTADOS = [
   { id: 'Habilitación programada', color: 'bg-cyan-100 text-cyan-800' },
   { id: 'Habilitación realizada',  color: 'bg-lime-100 text-lime-800' },
   { id: 'Evidencias recibidas',    color: 'bg-emerald-100 text-emerald-800' },
+  { id: 'OC solicitada',              color: 'bg-yellow-100 text-yellow-800' },
+  { id: 'Factura recibida',           color: 'bg-pink-100 text-pink-800' },
+  { id: 'Factura y OC entregadas',    color: 'bg-violet-100 text-violet-800' },
   { id: 'Cerrado',                 color: 'bg-green-100 text-green-800' },
 ]
 
@@ -76,6 +79,10 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [saving, setSaving] = useState(false)
   const [evidencias, setEvidencias] = useState([])
   const [evidenciaLinks, setEvidenciaLinks] = useState(ticket.Evidencias || '')
+  const [fechaFinalizacion, setFechaFinalizacion] = useState(
+  ticket.FechaFinalizacion ? ticket.FechaFinalizacion.split('T')[0].split('/').reverse().join('-') : ''
+  )
+  const [nroOrdenCompra, setNroOrdenCompra] = useState(ticket.NroOrdenCompra || '')
   const [docsProveedor, setDocsProveedor] = useState(ticket.DocsProveedor || '')
   const [nuevosDocsProveedor, setNuevosDocsProveedor] = useState([])
 
@@ -158,6 +165,8 @@ function Modal({ ticket, onClose, onUpdate }) {
       NroCotizacion: nroCotizacion,
       MontoCotizacion: montoCotizacion,
       Evidencias: newEvidenciaLinks,
+      FechaFinalizacion: fechaFinalizacion,
+      NroOrdenCompra: nroOrdenCompra,
       DocsProveedor: newDocsProveedor,
     })
     setSaving(false)
@@ -190,6 +199,8 @@ function Modal({ ticket, onClose, onUpdate }) {
               ['Elemento', ticket.Elemento],
               ['COD', ticket.COD],
               ['Fecha Requerimiento', ticket.FechaRequerimiento],
+              ['Fecha Finalización', ticket.FechaFinalizacion],
+              ['N° Orden de Compra', ticket.NroOrdenCompra],
               ['N° Cotización', ticket.NroCotizacion],
               ['Monto Cotización', ticket.MontoCotizacion ? `S/ ${ticket.MontoCotizacion}` : '—'],
             ].map(([lbl, val]) => (
@@ -262,6 +273,17 @@ function Modal({ ticket, onClose, onUpdate }) {
               <div>
                 <label className="block text-xs text-gray-600 mb-1">Fecha Habilitación</label>
                 <input type="date" value={fechaHabilitacion} onChange={e => setFechaHabilitacion(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Fecha Finalización del Servicio</label>
+                <input type="date" value={fechaFinalizacion} onChange={e => setFechaFinalizacion(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">N° Orden de Compra</label>
+                <input value={nroOrdenCompra} onChange={e => setNroOrdenCompra(e.target.value)}
+                  placeholder="Ej: OC-2026-001"
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
