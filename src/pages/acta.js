@@ -64,11 +64,7 @@ export default function Acta({ ticket, config }) {
         <style>{`
           @media print {
             .no-print { display: none !important; }
-            body { 
-              margin: 0 !important; 
-              padding: 0 !important;
-            }
-            /* Eliminar espacio superior en el PDF */
+            body { margin: 0; }
             @page {
               margin: 0.3cm !important;
             }
@@ -89,18 +85,18 @@ export default function Acta({ ticket, config }) {
         </button>
       </div>
 
-      {/* Acta - Reducido el margen superior */}
+      {/* Acta - CAMBIADO: margin y padding reducidos */}
       <div style={{
         maxWidth: '750px',
-        margin: '20px auto', // Cambiado de 40px a 20px
-        padding: '16px 30px', // Cambiado de 24px a 16px
+        margin: '20px auto',
+        padding: '16px 30px',
         fontFamily: 'Calibri, Arial, sans-serif',
         fontSize: '13px',
         color: '#000'
       }}>
-        {/* Header con logo - Reducido el margen inferior */}
+        {/* Header con logo - CAMBIADO: marginBottom reducido y altura del logo */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-          <img src="/logo1.png" alt="Quasar" style={{ height: '60px', objectFit: 'contain' }} />
+          <img src="/logo.png" alt="Quasar" style={{ height: '60px', objectFit: 'contain' }} />
           <p style={{ margin: 0, fontWeight: 'bold', fontSize: '15px' }}>GMRC S.A.</p>
         </div>
         <h1 style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold', margin: '0 0 10px' }}>
@@ -160,14 +156,14 @@ export default function Acta({ ticket, config }) {
             {ticket.Proveedor || ''}
           </div>
 
-          {/* Bloque inferior: código / firmas - CORREGIDA LA ALINEACIÓN */}
+          {/* Bloque inferior: código / firmas */}
           <div style={{ display: 'flex' }}>
             {/* Izquierda: código de campaña + firmas técnico/jefe */}
             <div style={{ flex: 2, borderRight: BORDER, display: 'flex', flexDirection: 'column' }}>
               <div style={{ borderBottom: BORDER, ...headerCell }}>CODIGO DE CAMPAÑA</div>
               <div style={{
                 borderBottom: BORDER, 
-                minHeight: '50px', // Reducido de 60px
+                minHeight: '50px',
                 fontWeight: 'bold',
                 display: 'flex', 
                 alignItems: 'center', 
@@ -200,7 +196,7 @@ export default function Acta({ ticket, config }) {
                 padding: '8px', 
                 textAlign: 'center', 
                 fontWeight: 'bold',
-                minHeight: '40px', // Altura fija para alinear
+                minHeight: '40px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -233,7 +229,7 @@ export default function Acta({ ticket, config }) {
           </div>
         </div>
 
-        {/* Notas */}
+        {/* Notas - CAMBIADO: marginTop reducido */}
         <div style={{ fontSize: '11px', fontWeight: 'bold', marginTop: '10px' }}>
           <p style={{ margin: '2px 0' }}>* Este formato debe ser entregado: debidamente llenado, junto con la factura y la Orden de Compra.</p>
           <p style={{ margin: '2px 0' }}>* Todas las firmas deben ser en original o electrónica.</p>
