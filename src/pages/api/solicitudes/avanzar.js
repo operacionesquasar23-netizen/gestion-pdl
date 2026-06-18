@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '../../../lib/supabase'
+//import { supabaseAdmin } from '../../../lib/supabase'
 import { sendStatusUpdate } from '../../../lib/email'
 
 export default async function handler(req, res) {
