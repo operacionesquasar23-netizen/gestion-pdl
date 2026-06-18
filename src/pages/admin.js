@@ -12,8 +12,8 @@ const ESTADOS = [
   { id: 'Habilitación programada', color: 'bg-cyan-100 text-cyan-800' },
   { id: 'Habilitación realizada',  color: 'bg-lime-100 text-lime-800' },
   { id: 'Evidencias recibidas',    color: 'bg-emerald-100 text-emerald-800' },
-  { id: 'OC solicitada',              color: 'bg-yellow-100 text-yellow-800' },
   { id: 'Factura recibida',           color: 'bg-pink-100 text-pink-800' },
+  { id: 'OC solicitada',              color: 'bg-yellow-100 text-yellow-800' },
   { id: 'Factura y OC entregadas',    color: 'bg-violet-100 text-violet-800' },
   { id: 'Cerrado',                 color: 'bg-green-100 text-green-800' },
 ]
@@ -377,6 +377,15 @@ function Modal({ ticket, onClose, onUpdate }) {
             </div>
           )}
 
+          {/* Generar Acta de Conformidad */}
+          {ticket.NroOrdenCompra && (
+            <button
+              onClick={() => window.open(`/acta?ticketId=${ticket.TicketID}`, '_blank')}
+              className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
+              📄 Generar Acta de Conformidad
+            </button>
+          )}
+
           {/* Correo de status */}
           <a href={`mailto:?subject=${encodeURIComponent(ticket.Asunto)}&body=${encodeURIComponent('Buen día estimado,\n\nSu requerimiento se encuentra actualmente en: "' + nuevoEstado + '"\n\nPuede ver el detalle completo en:\nhttps://gestion-pdl.vercel.app/seguimiento/' + ticket.TicketID)}`} className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">📧 Enviar correo de status</a>
 
@@ -490,6 +499,9 @@ export default function Admin() {
           <div className="flex gap-3">
             <a href="/" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               ← Inicio
+            </a>
+            <a href="/configuracion" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+              ⚙️ Configuración
             </a>
             <button onClick={fetchTickets}
               className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
