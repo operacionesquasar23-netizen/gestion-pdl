@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
 import Head from 'next/head'
 
 const API_URL = "https://script.google.com/macros/s/AKfycbw5lXuqBcUMOm3hSmhsF6fpFGTbuC0Lwld0-9Bhn90_QNJ0m58NQHvAFwzGs2IjZlc-MA/exec"
+
+const BORDER = '1.3px solid #000'
 
 export async function getServerSideProps({ query }) {
   const { ticketId } = query
@@ -47,6 +48,15 @@ export default function Acta({ ticket, config }) {
     return str.split(',')[0].trim()
   }
 
+  const tipo = (ticket.TipoSolicitud || '').toLowerCase()
+  const esInstalacion = tipo.includes('instalac')
+  const esMantenimiento = tipo.includes('mantenim')
+  const esTraslado = tipo.includes('traslado')
+  const esOtros = !esInstalacion && !esMantenimiento && !esTraslado
+
+  const headerCell = { padding: '6px 8px', textAlign: 'center', fontWeight: 'bold' }
+  const valueCell = { padding: '8px', textAlign: 'center' }
+
   return (
     <>
       <Head>
@@ -56,7 +66,7 @@ export default function Acta({ ticket, config }) {
             .no-print { display: none !important; }
             body { margin: 0; }
           }
-          body { font-family: Arial, sans-serif; background: white; }
+          body { font-family: Calibri, Arial, sans-serif; background: white; }
         `}</style>
       </Head>
 
@@ -76,144 +86,129 @@ export default function Acta({ ticket, config }) {
       <div style={{
         maxWidth: '750px',
         margin: '40px auto',
-        padding: '40px',
-        border: '2px solid #1D3461',
-        fontFamily: 'Arial, sans-serif',
+        padding: '24px 30px',
+        fontFamily: 'Calibri, Arial, sans-serif',
         fontSize: '13px',
         color: '#000'
       }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 'bold', margin: '0 0 4px' }}>GMRC S.A.</h2>
-          <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '2px' }}>
-            ACTA DE CONFORMIDAD
-          </h1>
+        {/* Header con logo */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+          <img src="/logo1.png" alt="Quasar" style={{ height: '70px', objectFit: 'contain' }} />
+          <p style={{ margin: 0, fontWeight: 'bold', fontSize: '15px' }}>GMRC S.A.</p>
         </div>
+        <h1 style={{ textAlign: 'center', fontSize: '19px', fontWeight: 'bold', margin: '0 0 18px' }}>
+          ACTA DE CONFORMIDAD
+        </h1>
 
-        {/* Datos principales */}
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
-          <tbody>
-            <tr>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', fontWeight: 'bold', width: '33%', backgroundColor: '#f0f0f0' }}>
-                N° DE ORDEN DE COMPRA
-              </td>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', width: '33%' }}>
-                {ticket.NroOrdenCompra || '_______________'}
-              </td>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', fontWeight: 'bold', width: '16%', backgroundColor: '#f0f0f0' }}>
-                FECHA DEL SERVICIO
-              </td>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', width: '18%' }}>
-                {formatFecha(ticket.FechaHabilitacion)}
-              </td>
-            </tr>
-            <tr>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
-                ÁREA
-              </td>
-              <td colSpan={3} style={{ border: '1px solid #000', padding: '8px 12px' }}>
-                RETAIL
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {/* Cuerpo con borde exterior */}
+        <div style={{ border: BORDER }}>
 
-        {/* Tipo de servicio */}
-        <div style={{ border: '1px solid #000', padding: '12px', marginBottom: '16px' }}>
-          <p style={{ fontWeight: 'bold', margin: '0 0 8px' }}>SERVICIO:</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
-            <p style={{ margin: '2px 0' }}>1. INSTALACIÓN &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (  {ticket.TipoSolicitud?.toLowerCase().includes('instalac') ? 'x' : ' '}  )</p>
-            <p style={{ margin: '2px 0' }}>3. TRASLADOS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (  {ticket.TipoSolicitud?.toLowerCase().includes('traslado') ? 'x' : ' '}  )</p>
-            <p style={{ margin: '2px 0' }}>2. MANTENIMIENTO (  {ticket.TipoSolicitud?.toLowerCase().includes('mantenim') ? 'x' : ' '}  )</p>
-            <p style={{ margin: '2px 0' }}>4. OTROS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (  {!ticket.TipoSolicitud?.toLowerCase().includes('instalac') && !ticket.TipoSolicitud?.toLowerCase().includes('traslado') && !ticket.TipoSolicitud?.toLowerCase().includes('mantenim') ? 'x' : ' '}  )</p>
+          {/* N° Orden / Fecha / Area */}
+          <div style={{ display: 'flex', borderBottom: BORDER }}>
+            <div style={{ flex: 1, borderRight: BORDER, ...headerCell }}>N° DE ORDEN DE COMPRA</div>
+            <div style={{ flex: 1, borderRight: BORDER, ...headerCell }}>FECHA DEL SERVICIO</div>
+            <div style={{ flex: 1, ...headerCell }}>AREA</div>
+          </div>
+          <div style={{ display: 'flex', borderBottom: BORDER }}>
+            <div style={{ flex: 1, borderRight: BORDER, ...valueCell }}>{ticket.NroOrdenCompra || '_______________'}</div>
+            <div style={{ flex: 1, borderRight: BORDER, ...valueCell }}>{formatFecha(ticket.FechaHabilitacion)}</div>
+            <div style={{ flex: 1, ...valueCell }}>RETAIL</div>
+          </div>
+
+          {/* Servicio */}
+          <div style={{ borderBottom: BORDER, padding: '10px 14px', minHeight: '150px' }}>
+            <p style={{ fontWeight: 'bold', margin: '0 0 14px' }}>SERVICIO:</p>
+            <div style={{ display: 'flex' }}>
+              <div style={{ flex: 2 }}>
+                <p style={{ margin: '4px 0' }}>1.&nbsp;&nbsp;&nbsp;&nbsp;INSTALACIÓN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;&nbsp;{esInstalacion ? 'x' : ' '}&nbsp;&nbsp;)</p>
+                <p style={{ margin: '4px 0' }}>2.&nbsp;&nbsp;&nbsp;&nbsp;MANTENIMIENTO&nbsp;&nbsp;&nbsp;(&nbsp;&nbsp;{esMantenimiento ? 'x' : ' '}&nbsp;&nbsp;)</p>
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: '4px 0' }}>3. TRASLADOS&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;&nbsp;{esTraslado ? 'x' : ' '}&nbsp;&nbsp;)</p>
+                <p style={{ margin: '4px 0' }}>4. OTROS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;&nbsp;{esOtros ? 'x' : ' '}&nbsp;&nbsp;)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Descripción */}
+          <div style={{ borderBottom: BORDER, ...headerCell }}>
+            DESCRIPCIÓN DEL SERVICIO (Solicitante)
+          </div>
+          <div style={{
+            borderBottom: BORDER, padding: '14px', minHeight: '130px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            textAlign: 'center', fontFamily: 'Arial, sans-serif', textTransform: 'uppercase'
+          }}>
+            {ticket.Asunto || ticket.Descripcion || ''}
+          </div>
+
+          {/* Informe proveedor */}
+          <div style={{ borderBottom: BORDER, ...headerCell }}>
+            INFORME Y OBSERVACIONES DEL SERVICIO POR PARTE DEL PROVEEDOR (Opcional)
+          </div>
+          <div style={{
+            borderBottom: BORDER, padding: '14px', minHeight: '100px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center'
+          }}>
+            {ticket.Proveedor || ''}
+          </div>
+
+          {/* Bloque inferior: código / firmas */}
+          <div style={{ display: 'flex' }}>
+            {/* Izquierda: código de campaña + firmas técnico/jefe */}
+            <div style={{ flex: 2, borderRight: BORDER, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ borderBottom: BORDER, ...headerCell }}>CODIGO DE CAMPAÑA</div>
+              <div style={{
+                borderBottom: BORDER, minHeight: '60px', fontWeight: 'bold',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                {ticket.COD || ''}
+              </div>
+              <div style={{ display: 'flex', borderBottom: BORDER, flexGrow: 1 }}>
+                <div style={{ flex: 1, borderRight: BORDER, minHeight: '70px' }}></div>
+                <div style={{ flex: 1, minHeight: '70px' }}></div>
+              </div>
+              <div style={{ display: 'flex' }}>
+                <div style={{ flex: 1, borderRight: BORDER, padding: '8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+                  FIRMA DEL TECNICO (PROVEEDOR)
+                </div>
+                <div style={{ flex: 1, padding: '8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+                  REVISADO POR EL JEFE DE AREA
+                </div>
+              </div>
+            </div>
+
+            {/* Derecha: fecha finalización + firma usuario responsable */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ borderBottom: BORDER, padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+                FECHA DE FINALIZACIÓN DEL SERVICIO
+              </div>
+              <div style={{ borderBottom: BORDER, padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>
+                {formatFecha(ticket.FechaFinalizacion || ticket.FechaHabilitacion)}
+              </div>
+              <div style={{ borderBottom: BORDER, padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+                NOMBRE Y FIRMA DEL USUARIO RESPONSABLE
+              </div>
+              <div style={{
+                flexGrow: 1, display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'flex-end', padding: '8px'
+              }}>
+                {config.firmaURL && (
+                  <img
+                    src={`/api/imagen?url=${encodeURIComponent(config.firmaURL)}`}
+                    alt="Firma"
+                    style={{ maxHeight: '55px', maxWidth: '160px', objectFit: 'contain', marginBottom: '4px' }}
+                  />
+                )}
+                <p style={{ margin: 0, fontWeight: 'bold', fontSize: '12px' }}>{config.nombre}</p>
+                <p style={{ margin: '2px 0 0', fontSize: '11px' }}>DNI {config.dni}</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Descripción */}
-        <div style={{ border: '1px solid #000', padding: '12px', marginBottom: '16px' }}>
-          <p style={{ fontWeight: 'bold', margin: '0 0 8px', textTransform: 'uppercase' }}>
-            DESCRIPCIÓN DEL SERVICIO (Solicitante)
-          </p>
-          <p style={{ margin: '0', minHeight: '40px', textTransform: 'uppercase' }}>
-            {ticket.Asunto || ticket.Descripcion || ''}
-          </p>
-        </div>
-
-        {/* Informe proveedor */}
-        <div style={{ border: '1px solid #000', padding: '12px', marginBottom: '16px' }}>
-          <p style={{ fontWeight: 'bold', margin: '0 0 8px', textTransform: 'uppercase' }}>
-            INFORME Y OBSERVACIONES DEL SERVICIO POR PARTE DEL PROVEEDOR (Opcional)
-          </p>
-          <p style={{ margin: '0', minHeight: '30px' }}>
-            {ticket.Proveedor || ''}
-          </p>
-        </div>
-
-        {/* COD y Fecha finalización */}
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
-          <tbody>
-            <tr>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', fontWeight: 'bold', width: '25%', backgroundColor: '#f0f0f0' }}>
-                CÓDIGO DE CAMPAÑA
-              </td>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', width: '25%' }}>
-                {ticket.COD || ''}
-              </td>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', fontWeight: 'bold', width: '25%', backgroundColor: '#f0f0f0' }}>
-                FECHA DE FINALIZACIÓN DEL SERVICIO
-              </td>
-              <td style={{ border: '1px solid #000', padding: '8px 12px', width: '25%' }}>
-                {formatFecha(ticket.FechaFinalizacion || ticket.FechaHabilitacion)}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* Firmas */}
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
-          <tbody>
-            <tr>
-              <td style={{ border: '1px solid #000', padding: '16px 12px', width: '50%', textAlign: 'center', verticalAlign: 'bottom' }}>
-                <p style={{ fontWeight: 'bold', margin: '0 0 8px', textTransform: 'uppercase', fontSize: '11px' }}>
-                  NOMBRE Y FIRMA DEL USUARIO RESPONSABLE
-                </p>
-                {config.firmaURL && (
-                  <div style={{ marginBottom: '8px' }}>
-                    <img
-                      src={`/api/imagen?url=${encodeURIComponent(config.firmaURL)}`}
-                      alt="Firma"
-                      style={{ maxHeight: '60px', maxWidth: '200px', objectFit: 'contain' }}
-                    />
-                  </div>
-                )}
-                <p style={{ margin: '4px 0 0', fontSize: '12px', fontWeight: 'bold' }}>
-                  {config.nombre}
-                </p>
-                <p style={{ margin: '2px 0 0', fontSize: '11px' }}>
-                  DNI {config.dni}
-                </p>
-              </td>
-              <td style={{ border: '1px solid #000', padding: '16px 12px', width: '50%', textAlign: 'center', verticalAlign: 'bottom' }}>
-                <p style={{ fontWeight: 'bold', margin: '0 0 40px', textTransform: 'uppercase', fontSize: '11px' }}>
-                  FIRMA DEL TÉCNICO (PROVEEDOR)
-                </p>
-                <div style={{ borderTop: '1px solid #000', paddingTop: '4px' }}>
-                  <p style={{ margin: '0', fontSize: '11px' }}>{ticket.Proveedor || ''}</p>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={2} style={{ border: '1px solid #000', padding: '12px', textAlign: 'center' }}>
-                <p style={{ fontWeight: 'bold', margin: '0 0 30px', textTransform: 'uppercase', fontSize: '11px' }}>
-                  REVISADO POR EL JEFE DE ÁREA
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
         {/* Notas */}
-        <div style={{ fontSize: '11px', color: '#444', borderTop: '1px solid #ddd', paddingTop: '12px' }}>
+        <div style={{ fontSize: '11px', fontWeight: 'bold', marginTop: '14px' }}>
           <p style={{ margin: '2px 0' }}>* Este formato debe ser entregado: debidamente llenado, junto con la factura y la Orden de Compra.</p>
           <p style={{ margin: '2px 0' }}>* Todas las firmas deben ser en original o electrónica.</p>
           <p style={{ margin: '2px 0' }}>* La fecha de finalización del servicio debe ser menor o igual a la fecha de la emisión de la factura.</p>
