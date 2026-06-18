@@ -183,7 +183,7 @@ export default function Acta({ ticket, config }) {
             <div style={{ flex: 2, borderRight: BORDER, display: 'flex', flexDirection: 'column' }}>
               <div style={{ borderBottom: BORDER, ...headerCell }}>CODIGO DE CAMPAÑA</div>
               <div style={{
-                borderBottom: BORDER, minHeight: '60px', fontWeight: 'bold',
+                borderBottom: BORDER, minHeight: '40px', fontWeight: 'bold',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
                 {ticket.COD || ''}
@@ -211,13 +211,13 @@ export default function Acta({ ticket, config }) {
                 height: '100%'
               }}
             >
-              <div style={{ borderBottom: BORDER, padding: '12px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+              <div style={{ borderBottom: BORDER, padding: '7px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
                 FECHA DE FINALIZACIÓN DEL SERVICIO
               </div>
               <div style={{ borderBottom: BORDER, padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>
                 {formatFecha(ticket.FechaFinalizacion || ticket.FechaHabilitacion)}
               </div>
-              <div style={{ borderBottom: BORDER, padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+              <div style={{ padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
                 NOMBRE Y FIRMA DEL USUARIO RESPONSABLE
               </div>
               <div
