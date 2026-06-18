@@ -63,13 +63,31 @@ export default function Acta({ ticket, config }) {
         <title>Acta de Conformidad · {ticket.TicketID}</title>
         <style>{`
           @media print {
-            .no-print { display: none !important; }
-            body { margin: 0; }
             @page {
-              margin: 0.3cm !important;
+              size: A4;
+              margin: 8mm;
+            }
+
+            html,
+            body {
+              margin: 0;
+              padding: 0;
+            }
+
+            .acta-container {
+              page-break-inside: avoid;
+            }
+
+            .no-print {
+              display: none !important;
             }
           }
-          body { font-family: Calibri, Arial, sans-serif; background: white; }
+
+          body {
+            font-family: Calibri, Arial, sans-serif;
+            background: white;
+            margin: 0;
+          }
         `}</style>
       </Head>
 
@@ -85,21 +103,24 @@ export default function Acta({ ticket, config }) {
         </button>
       </div>
 
-      {/* Acta - CAMBIADO: margin y padding reducidos */}
-      <div style={{
-        maxWidth: '750px',
-        margin: '20px auto',
-        padding: '16px 30px',
-        fontFamily: 'Calibri, Arial, sans-serif',
-        fontSize: '13px',
-        color: '#000'
-      }}>
-        {/* Header con logo - CAMBIADO: marginBottom reducido y altura del logo */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-          <img src="/logo.png" alt="Quasar" style={{ height: '60px', objectFit: 'contain' }} />
+      {/* Acta */}
+      <div
+        className="acta-container"
+        style={{
+          maxWidth: '750px',
+          margin: '0 auto',
+          padding: '10px 20px',
+          fontFamily: 'Calibri, Arial, sans-serif',
+          fontSize: '13px',
+          color: '#000'
+        }}
+      >
+        {/* Header con logo */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+          <img src="/logo.png" alt="Quasar" style={{ height: '70px', objectFit: 'contain' }} />
           <p style={{ margin: 0, fontWeight: 'bold', fontSize: '15px' }}>GMRC S.A.</p>
         </div>
-        <h1 style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold', margin: '0 0 10px' }}>
+        <h1 style={{ textAlign: 'center', fontSize: '19px', fontWeight: 'bold', margin: '0 0 18px' }}>
           ACTA DE CONFORMIDAD
         </h1>
 
@@ -121,7 +142,7 @@ export default function Acta({ ticket, config }) {
           {/* Servicio */}
           <div style={{ borderBottom: BORDER, padding: '10px 14px', minHeight: '150px' }}>
             <p style={{ fontWeight: 'bold', margin: '0 0 14px' }}>SERVICIO:</p>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', alignItems: 'stretch' }}>
               <div style={{ flex: 2 }}>
                 <p style={{ margin: '4px 0' }}>1.&nbsp;&nbsp;&nbsp;&nbsp;INSTALACIÓN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;&nbsp;{esInstalacion ? 'x' : ' '}&nbsp;&nbsp;)</p>
                 <p style={{ margin: '4px 0' }}>2.&nbsp;&nbsp;&nbsp;&nbsp;MANTENIMIENTO&nbsp;&nbsp;&nbsp;(&nbsp;&nbsp;{esMantenimiento ? 'x' : ' '}&nbsp;&nbsp;)</p>
@@ -157,69 +178,63 @@ export default function Acta({ ticket, config }) {
           </div>
 
           {/* Bloque inferior: código / firmas */}
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', alignItems: 'stretch' }}>
             {/* Izquierda: código de campaña + firmas técnico/jefe */}
             <div style={{ flex: 2, borderRight: BORDER, display: 'flex', flexDirection: 'column' }}>
               <div style={{ borderBottom: BORDER, ...headerCell }}>CODIGO DE CAMPAÑA</div>
               <div style={{
-                borderBottom: BORDER, 
-                minHeight: '50px',
-                fontWeight: 'bold',
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                padding: '4px'
+                borderBottom: BORDER, minHeight: '60px', fontWeight: 'bold',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
                 {ticket.COD || ''}
               </div>
               <div style={{ display: 'flex', borderBottom: BORDER, flex: 1 }}>
-                <div style={{ flex: 1, borderRight: BORDER, minHeight: '60px' }}></div>
-                <div style={{ flex: 1, minHeight: '60px' }}></div>
+                <div style={{ flex: 1, borderRight: BORDER, minHeight: '70px' }}></div>
+                <div style={{ flex: 1, minHeight: '70px' }}></div>
               </div>
               <div style={{ display: 'flex' }}>
-                <div style={{ flex: 1, borderRight: BORDER, padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+                <div style={{ flex: 1, borderRight: BORDER, padding: '8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
                   FIRMA DEL TECNICO (PROVEEDOR)
                 </div>
-                <div style={{ flex: 1, padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
+                <div style={{ flex: 1, padding: '8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
                   REVISADO POR EL JEFE DE AREA
                 </div>
               </div>
             </div>
 
             {/* Derecha: fecha finalización + firma usuario responsable */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <div
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%'
+              }}
+            >
               <div style={{ borderBottom: BORDER, padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
                 FECHA DE FINALIZACIÓN DEL SERVICIO
               </div>
-              <div style={{ 
-                borderBottom: BORDER, 
-                padding: '8px', 
-                textAlign: 'center', 
-                fontWeight: 'bold',
-                minHeight: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
+              <div style={{ borderBottom: BORDER, padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>
                 {formatFecha(ticket.FechaFinalizacion || ticket.FechaHabilitacion)}
               </div>
               <div style={{ borderBottom: BORDER, padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
                 NOMBRE Y FIRMA DEL USUARIO RESPONSABLE
               </div>
-              <div style={{
-                flex: 1,
-                display: 'flex', 
-                flexDirection: 'column',
-                alignItems: 'center', 
-                justifyContent: 'flex-end', 
-                padding: '8px',
-                minHeight: '60px'
-              }}>
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  padding: '8px'
+                }}
+              >
                 {config.firmaURL && (
                   <img
                     src={`/api/imagen?url=${encodeURIComponent(config.firmaURL)}`}
                     alt="Firma"
-                    style={{ maxHeight: '50px', maxWidth: '140px', objectFit: 'contain', marginBottom: '4px' }}
+                    style={{ maxHeight: '55px', maxWidth: '160px', objectFit: 'contain', marginBottom: '4px' }}
                   />
                 )}
                 <p style={{ margin: 0, fontWeight: 'bold', fontSize: '12px' }}>{config.nombre}</p>
@@ -229,8 +244,8 @@ export default function Acta({ ticket, config }) {
           </div>
         </div>
 
-        {/* Notas - CAMBIADO: marginTop reducido */}
-        <div style={{ fontSize: '11px', fontWeight: 'bold', marginTop: '10px' }}>
+        {/* Notas */}
+        <div style={{ fontSize: '11px', fontWeight: 'bold', marginTop: '14px' }}>
           <p style={{ margin: '2px 0' }}>* Este formato debe ser entregado: debidamente llenado, junto con la factura y la Orden de Compra.</p>
           <p style={{ margin: '2px 0' }}>* Todas las firmas deben ser en original o electrónica.</p>
           <p style={{ margin: '2px 0' }}>* La fecha de finalización del servicio debe ser menor o igual a la fecha de la emisión de la factura.</p>
