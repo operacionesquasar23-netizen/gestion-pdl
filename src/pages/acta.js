@@ -117,7 +117,7 @@ export default function Acta({ ticket, config }) {
       >
         {/* Header con logo */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-          <img src="/logo.png" alt="Quasar" style={{ height: '70px', objectFit: 'contain' }} />
+          <img src="/logo1.png" alt="Quasar" style={{ height: '70px', objectFit: 'contain' }} />
           <p style={{ margin: 0, fontWeight: 'bold', fontSize: '15px' }}>GMRC S.A.</p>
         </div>
         <h1 style={{ textAlign: 'center', fontSize: '19px', fontWeight: 'bold', margin: '0 0 18px' }}>
@@ -183,7 +183,7 @@ export default function Acta({ ticket, config }) {
             <div style={{ flex: 2, borderRight: BORDER, display: 'flex', flexDirection: 'column' }}>
               <div style={{ borderBottom: BORDER, ...headerCell }}>CODIGO DE CAMPAÑA</div>
               <div style={{
-                borderBottom: BORDER, minHeight: '300px', fontWeight: 'bold',
+                borderBottom: BORDER, minHeight: '30px', fontWeight: 'bold',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
                 {ticket.COD || ''}
