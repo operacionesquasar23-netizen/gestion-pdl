@@ -47,41 +47,41 @@ export default function Configuracion() {
     try {
       let urlFirma = firmaURL
 
-      // Subir firma si hay una nueva
-      if (firmaFile) {
-        const reader = new FileReader()
-        const base64 = await new Promise((resolve, reject) => {
-          reader.onload = () => resolve(reader.result.split(',')[1])
-          reader.onerror = reject
-          reader.readAsDataURL(firmaFile)
-        })
+        // Subir firma si hay una nueva
+        if (firmaFile) {
+          const reader = new FileReader()
+          const base64 = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1])
+            reader.onerror = reject
+            reader.readAsDataURL(firmaFile)
+          })
 
-        const res = await fetch(API_URL, {
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- cambio aquí
+            body: JSON.stringify({
+              action: 'uploadFile',
+              ticketId: 'CONFIG',
+              fileName: `firma_responsable.${firmaFile.name.split('.').pop()}`,
+              mimeType: firmaFile.type,
+              fileData: base64
+            })
+          })
+          const data = await res.json()
+          if (data.url) urlFirma = data.url
+        }
+
+        // Guardar en Sheets
+        await fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- cambio aquí también
           body: JSON.stringify({
-            action: 'uploadFile',
-            ticketId: 'CONFIG',
-            fileName: `firma_responsable.${firmaFile.name.split('.').pop()}`,
-            mimeType: firmaFile.type,
-            fileData: base64
+            action: 'update',
+            sheet: 'Configuracion',
+            row: 2,
+            values: [nombre, dni, urlFirma]
           })
         })
-        const data = await res.json()
-        if (data.url) urlFirma = data.url
-      }
-
-      // Guardar en Sheets
-      await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'update',
-          sheet: 'Configuracion',
-          row: 2,
-          values: [nombre, dni, urlFirma]
-        })
-      })
 
       setFirmaURL(urlFirma)
       setSaved(true)
