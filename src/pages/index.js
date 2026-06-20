@@ -166,6 +166,19 @@ export default function Home() {
             </span>
           </a>    
 
+          {/* Resumen */}
+          <a href="/resumen"
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all hover:-translate-y-0.5 group">
+            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-100 transition-colors">
+              📋
+            </div>
+            <h3 className="text-base font-semibold text-gray-900 mb-1">Resumen</h3>
+            <p className="text-sm text-gray-500 mb-4">Estado visual de todas las solicitudes.</p>
+            <span className="text-xs font-semibold text-blue-700 group-hover:text-blue-800">
+              Ver resumen →
+            </span>
+          </a>
+
         </div>
 
           {/* Stats o info adicional */}
