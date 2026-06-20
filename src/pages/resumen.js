@@ -145,18 +145,34 @@ export default function Resumen() {
           </div>
 
           {/* Leyenda */}
-          <div className="flex items-center gap-4 text-xs text-gray-400 px-2">
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded-full bg-blue-700 ring-2 ring-blue-200"></div>
-              <span>Estado actual</span>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Guía de estados</p>
+            <div className="flex items-center gap-1 overflow-x-auto pb-2">
+              {ESTADOS.map((e, i) => (
+                <div key={e.id} className="flex items-center flex-shrink-0">
+                  <div className="flex flex-col items-center gap-1 w-20">
+                    <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[10px] font-bold">
+                      {i + 1}
+                    </div>
+                    <span className="text-[10px] text-gray-400 text-center leading-tight">{e.id}</span>
+                  </div>
+                  {i < ESTADOS.length - 1 && <div className="h-0.5 w-3 bg-gray-200 flex-shrink-0 mb-5" />}
+                </div>
+              ))}
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded-full bg-blue-600"></div>
-              <span>Completado</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded-full bg-gray-200"></div>
-              <span>Pendiente</span>
+            <div className="flex items-center gap-4 text-xs text-gray-400 mt-3 pt-3 border-t border-gray-50">
+              <div className="flex items-center gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-blue-700 ring-2 ring-blue-200"></div>
+                <span>Estado actual</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-blue-600"></div>
+                <span>Completado</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-4 h-4 rounded-full bg-gray-200"></div>
+                <span>Pendiente</span>
+              </div>
             </div>
           </div>
 
