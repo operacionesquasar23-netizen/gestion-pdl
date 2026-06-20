@@ -85,6 +85,8 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [nroOrdenCompra, setNroOrdenCompra] = useState(ticket.NroOrdenCompra || '')
   const [docsProveedor, setDocsProveedor] = useState(ticket.DocsProveedor || '')
   const [nuevosDocsProveedor, setNuevosDocsProveedor] = useState([])
+  const [nuevosArchivosEjecutivo, setNuevosArchivosEjecutivo] = useState([])
+  const [datosAdjuntos, setDatosAdjuntos] = useState(ticket.DatosAdjuntos || '')
 
   const files = ticket.DatosAdjuntos
     ? ticket.DatosAdjuntos.split(',').map(f => f.trim()).filter(Boolean)
@@ -153,6 +155,34 @@ function Modal({ ticket, onClose, onUpdate }) {
       setDocsProveedor(newDocsProveedor)
     }
 
+    let newDatosAdjuntos = datosAdjuntos
+    if (nuevosArchivosEjecutivo.length > 0) {
+      const nuevosLinks = await Promise.all(nuevosArchivosEjecutivo.map(file =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = async () => {
+            const res = await fetch('/api/admin/subirevidencia', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ticketId: ticket.TicketID,
+                fileName: file.name,
+                mimeType: file.type,
+                data: reader.result.split(',')[1]
+              })
+            })
+            const data = await res.json()
+            resolve(data.url || '')
+          }
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+      ))
+      const links = nuevosLinks.filter(Boolean).join(', ')
+      newDatosAdjuntos = newDatosAdjuntos ? `${newDatosAdjuntos}, ${links}` : links
+      setDatosAdjuntos(newDatosAdjuntos)
+    }
+
     await onUpdate(ticket, {
       Estado: nuevoEstado,
       Observaciones: observaciones,
@@ -168,6 +198,7 @@ function Modal({ ticket, onClose, onUpdate }) {
       FechaFinalizacion: fechaFinalizacion,
       NroOrdenCompra: nroOrdenCompra,
       DocsProveedor: newDocsProveedor,
+      DatosAdjuntos: newDatosAdjuntos,
     })
     setSaving(false)
     onClose()
@@ -308,6 +339,18 @@ function Modal({ ticket, onClose, onUpdate }) {
               className="w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
               {saving ? 'Guardando...' : '✓ Actualizar solicitud'}
             </button>
+          </div>
+
+          {/* Archivos del ejecutivo (olvidados) */}
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Agregar archivo del ejecutivo</p>
+            <p className="text-xs text-gray-400 mb-2">Usa esto si el ejecutivo olvidó adjuntar algo al crear la solicitud.</p>
+            <input type="file" multiple accept="image/*,.pdf"
+              onChange={e => setNuevosArchivosEjecutivo(Array.from(e.target.files))}
+              className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+            {nuevosArchivosEjecutivo.length > 0 && (
+              <p className="text-xs text-gray-400 mt-1">{nuevosArchivosEjecutivo.length} archivo(s) seleccionado(s)</p>
+            )}
           </div>
 
           {/* Subir evidencias */}
