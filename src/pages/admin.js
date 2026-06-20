@@ -88,8 +88,8 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [nuevosArchivosEjecutivo, setNuevosArchivosEjecutivo] = useState([])
   const [datosAdjuntos, setDatosAdjuntos] = useState(ticket.DatosAdjuntos || '')
 
-  const files = ticket.DatosAdjuntos
-    ? ticket.DatosAdjuntos.split(',').map(f => f.trim()).filter(Boolean)
+  const files = datosAdjuntos
+    ? datosAdjuntos.split(',').map(f => f.trim()).filter(Boolean)
     : []
 
   const evidenciaFiles = evidenciaLinks
