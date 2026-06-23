@@ -49,10 +49,11 @@ export default function Acta({ ticket, config }) {
   }
 
   const tipo = (ticket.TipoSolicitud || '').toLowerCase()
-  const esInstalacion = tipo.includes('Visit')
+  const esInstalacion = tipo.includes('instalac') ||
+  (!esMantenimiento && !esTraslado)
   const esMantenimiento = tipo.includes('mantenim')
   const esTraslado = tipo.includes('traslado')
-  const esOtros = !esInstalacion && !esMantenimiento && !esTraslado
+  const esOtros = false
 
   const headerCell = { padding: '6px 8px', textAlign: 'center', fontWeight: 'bold' }
   const valueCell = { padding: '8px', textAlign: 'center' }
