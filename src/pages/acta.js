@@ -163,7 +163,7 @@ export default function Acta({ ticket, config }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             textAlign: 'center', fontFamily: 'Arial, sans-serif', textTransform: 'uppercase'
           }}>
-            {ticket.Asunto || ticket.Tienda || ''}
+            {`${ticket.Asunto || ''} - ${ticket.Tienda || ''}`}
           </div>
 
           {/* Informe proveedor */}
