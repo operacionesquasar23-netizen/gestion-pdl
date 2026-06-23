@@ -49,7 +49,7 @@ export default function Acta({ ticket, config }) {
   }
 
   const tipo = (ticket.TipoSolicitud || '').toLowerCase()
-  const esInstalacion = tipo.includes('instalac')
+  const esInstalacion = tipo.includes('Visit')
   const esMantenimiento = tipo.includes('mantenim')
   const esTraslado = tipo.includes('traslado')
   const esOtros = !esInstalacion && !esMantenimiento && !esTraslado
