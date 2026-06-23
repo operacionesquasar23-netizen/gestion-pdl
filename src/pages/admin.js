@@ -14,7 +14,7 @@ const ESTADOS = [
   { id: 'Evidencias recibidas',    color: 'bg-emerald-100 text-emerald-800' },
   { id: 'Factura recibida',           color: 'bg-pink-100 text-pink-800' },
   { id: 'OC solicitada',              color: 'bg-yellow-100 text-yellow-800' },
-  { id: 'Factura y OC entregadas',    color: 'bg-violet-100 text-violet-800' },
+  { id: 'AC y OC entregadas',    color: 'bg-violet-100 text-violet-800' },
   { id: 'Cerrado',                 color: 'bg-green-100 text-green-800' },
 ]
 

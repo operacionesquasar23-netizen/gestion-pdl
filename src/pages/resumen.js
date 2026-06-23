@@ -14,7 +14,7 @@ const ESTADOS = [
   { id: 'Evidencias recibidas',    short: 'Evidencias recibidas' },
   { id: 'OC solicitada',           short: 'OC solicitada' },
   { id: 'Factura recibida',        short: 'Factura recibida' },
-  { id: 'Factura y OC entregadas', short: 'Factura y OC entregadas' },
+  { id: 'AC y OC entregadas', short: 'Factura y OC entregadas' },
   { id: 'Cerrado',                 short: 'Cerrado' },
 ]
 
