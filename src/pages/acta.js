@@ -48,12 +48,16 @@ export default function Acta({ ticket, config }) {
     return str.split(',')[0].trim()
   }
 
-  const tipo = (ticket.TipoSolicitud || '').toLowerCase()
-  const esInstalacion = tipo.includes('instalac') ||
+const tipo = (ticket.TipoSolicitud || '').toLowerCase()
+
+const esMantenimiento = tipo.includes('mantenim')
+const esTraslado = tipo.includes('traslado')
+
+const esInstalacion =
+  tipo.includes('instalac') ||
   (!esMantenimiento && !esTraslado)
-  const esMantenimiento = tipo.includes('mantenim')
-  const esTraslado = tipo.includes('traslado')
-  const esOtros = false
+
+const esOtros = false
 
   const headerCell = { padding: '6px 8px', textAlign: 'center', fontWeight: 'bold' }
   const valueCell = { padding: '8px', textAlign: 'center' }
