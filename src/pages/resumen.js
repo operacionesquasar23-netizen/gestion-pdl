@@ -10,11 +10,11 @@ const ESTADOS = [
   { id: 'Cotización enviada',      short: 'Cotización enviada' },
   { id: 'Cotización aprobada',     short: 'Cotización aprobada' },
   { id: 'Habilitación programada', short: 'Habilitación programada' },
+  { id: 'Habilitación reprogramada', short: 'Habilitación reprogramada' },
   { id: 'Habilitación realizada',  short: 'Habilitación realizada' },
   { id: 'Evidencias recibidas',    short: 'Evidencias recibidas' },
   { id: 'OC solicitada',           short: 'OC solicitada' },
-  { id: 'Factura recibida',        short: 'Factura recibida' },
-  { id: 'AC y OC entregadas', short: 'Factura y OC entregadas' },
+  { id: 'AC y OC entregadas',      short: 'AC y OC entregadas' },
   { id: 'Cerrado',                 short: 'Cerrado' },
 ]
 
