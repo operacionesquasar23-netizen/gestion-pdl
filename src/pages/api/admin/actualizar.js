@@ -33,22 +33,26 @@ export default async function handler(req, res) {
 
     if (rowIndex === -1) return res.status(404).json({ error: 'Ticket no encontrado' })
 
+    const estadoColIndex = headers.indexOf('Estado')
+    const estadoAnterior = rows[rowIndex][estadoColIndex]
     const row = [...rows[rowIndex]]
     Object.entries(updates).forEach(([key, value]) => {
       const colIndex = headers.indexOf(key)
       if (colIndex !== -1) row[colIndex] = value
     })
 
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'update',
-        sheet: 'Solicitudes',
-        row: rowIndex + 1,
-        values: row
+    // Solo registrar en historial si el estado realmente cambió
+    if (updates.Estado && updates.Estado !== estadoAnterior) {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'append',
+          sheet: 'Historial',
+          values: [Date.now(), ticketId, updates.Estado, updates.Observaciones || '', now]
+        })
       })
-    })
+    }
 
     await fetch(API_URL, {
       method: 'POST',
