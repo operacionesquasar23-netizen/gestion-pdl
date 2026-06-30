@@ -38,7 +38,7 @@ export async function getServerSideProps({ params }) {
   if (!code) return { notFound: true }
 
   try {
-    const API_URL = "https://script.google.com/macros/s/AKfycbw5lXuqBcUMOm3hSmhsF6fpFGTbuC0Lwld0-9Bhn90_QNJ0m58NQHvAFwzGs2IjZlc-MA/exec"
+    const API_URL = "https://script.google.com/macros/s/AKfycbwLbjC8aOQ9sZ7x0_CLAySNOx5ib7xu65R2KsQlkK-0hIKZIZ4Y1_g_Ggt3rASxd6-U/exec"
     const res = await fetch(`${API_URL}?sheet=Solicitudes`)
     const data = await res.json()
     const rows = data.values || []
