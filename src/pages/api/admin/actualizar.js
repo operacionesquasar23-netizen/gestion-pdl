@@ -15,12 +15,9 @@ export default async function handler(req, res) {
       hour: '2-digit', minute: '2-digit'
     })
 
-    // Si el estado es Cerrado, agregar FechaCierre automáticamente
     if (updates.Estado === 'Cerrado') {
       updates.FechaCierre = now
     }
-
-    // Guardar fecha del ultimo cambio de estado
     if (updates.Estado) {
       updates.FechaUltimoEstado = now
     }
@@ -41,7 +38,25 @@ export default async function handler(req, res) {
       if (colIndex !== -1) row[colIndex] = value
     })
 
-    // Solo registrar en historial si el estado realmente cambió
+    // ⬇️ ESTO ES LO QUE FALTA: guardar la fila actualizada en Solicitudes
+    const updateResp = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'update',
+        sheet: 'Solicitudes',
+        row: rowIndex + 1,
+        values: row
+      })
+    })
+
+    const updateResult = await updateResp.json()
+    if (!updateResult.ok) {
+      console.error('Update sheet failed:', updateResult)
+      return res.status(502).json({ error: 'No se pudo actualizar la hoja' })
+    }
+
+    // Historial: solo si el estado realmente cambió
     if (updates.Estado && updates.Estado !== estadoAnterior) {
       await fetch(API_URL, {
         method: 'POST',
@@ -53,16 +68,6 @@ export default async function handler(req, res) {
         })
       })
     }
-
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'append',
-        sheet: 'Historial',
-        values: [Date.now(), ticketId, updates.Estado || '', updates.Observaciones || '', now]
-      })
-    })
 
     return res.status(200).json({ ok: true })
   } catch (err) {
