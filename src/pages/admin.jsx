@@ -61,6 +61,67 @@ function FileItem({ url, label }) {
   )
 }
 
+// Compresión conservadora: solo reduce imágenes pesadas, mantiene buena calidad
+// para que sirvan como evidencia. No toca PDFs ni archivos ya livianos.
+async function comprimirImagen(file, maxWidth = 2400, calidad = 0.88) {
+  if (!file.type.startsWith('image/')) return file // no tocar PDFs
+
+  if (file.size < 1.5 * 1024 * 1024) return file // ya es liviano, no tocar
+
+  return new Promise((resolve) => {
+    const img = new Image()
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width)
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width * scale
+        canvas.height = img.height * scale
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        canvas.toBlob((blob) => {
+          if (!blob || blob.size >= file.size) return resolve(file) // si no mejora, usar original
+          resolve(new File([blob], file.name, { type: 'image/jpeg' }))
+        }, 'image/jpeg', calidad)
+      }
+      img.onerror = () => resolve(file)
+      img.src = e.target.result
+    }
+    reader.onerror = () => resolve(file)
+    reader.readAsDataURL(file)
+  })
+}
+
+// Sube un archivo individual y notifica progreso al terminar (éxito o error)
+function subirArchivo(file, ticketId, prefijo, onProgreso) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = async () => {
+      try {
+        const res = await fetch('/api/admin/subirevidencia', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticketId,
+            fileName: `${prefijo}${file.name}`,
+            mimeType: file.type,
+            data: reader.result.split(',')[1]
+          })
+        })
+        const data = await res.json()
+        onProgreso()
+        resolve(data.url || '')
+      } catch (err) {
+        console.error('Error subiendo', file.name, err)
+        onProgreso()
+        resolve('')
+      }
+    }
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 function Modal({ ticket, onClose, onUpdate }) {
   const [nuevoEstado, setNuevoEstado] = useState(ticket.Estado || '')
   const [observaciones, setObservaciones] = useState(ticket.Observaciones || '')
@@ -77,6 +138,7 @@ function Modal({ ticket, onClose, onUpdate }) {
   )
   const [turno, setTurno] = useState(ticket.Turno || '')
   const [saving, setSaving] = useState(false)
+  const [progreso, setProgreso] = useState({ actual: 0, total: 0 })
   const [evidencias, setEvidencias] = useState([])
   const [evidenciaLinks, setEvidenciaLinks] = useState(ticket.Evidencias || '')
   const [fechaFinalizacion, setFechaFinalizacion] = useState(
@@ -99,109 +161,66 @@ function Modal({ ticket, onClose, onUpdate }) {
   const handleSave = async () => {
     setSaving(true)
 
-    let newEvidenciaLinks = evidenciaLinks
-    if (evidencias.length > 0) {
-      const nuevosLinks = await Promise.all(evidencias.map(file =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = async () => {
-            const res = await fetch('/api/admin/subirevidencia', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ticketId: ticket.TicketID,
-                fileName: file.name,
-                mimeType: file.type,
-                data: reader.result.split(',')[1]
-              })
-            })
-            const data = await res.json()
-            resolve(data.url || '')
-          }
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-      ))
-      const links = nuevosLinks.filter(Boolean).join(', ')
-      newEvidenciaLinks = newEvidenciaLinks ? `${newEvidenciaLinks}, ${links}` : links
+    try {
+      const totalArchivos = evidencias.length + nuevosDocsProveedor.length + nuevosArchivosEjecutivo.length
+      let subidos = 0
+      setProgreso({ actual: 0, total: totalArchivos })
+
+      const marcarProgreso = () => {
+        subidos += 1
+        setProgreso({ actual: subidos, total: totalArchivos })
+      }
+
+      // Comprimir en paralelo (rápido, solo afecta fotos pesadas)
+      const [evidenciasComprimidas, docsComprimidos, ejecutivoComprimidos] = await Promise.all([
+        Promise.all(evidencias.map(f => comprimirImagen(f))),
+        Promise.all(nuevosDocsProveedor.map(f => comprimirImagen(f))),
+        Promise.all(nuevosArchivosEjecutivo.map(f => comprimirImagen(f))),
+      ])
+
+      // Subir las 3 categorías EN PARALELO entre sí (no en secuencia)
+      const [linksEvidencias, linksDocs, linksEjecutivo] = await Promise.all([
+        Promise.all(evidenciasComprimidas.map(f => subirArchivo(f, ticket.TicketID, '', marcarProgreso))),
+        Promise.all(docsComprimidos.map(f => subirArchivo(f, ticket.TicketID, 'doc_', marcarProgreso))),
+        Promise.all(ejecutivoComprimidos.map(f => subirArchivo(f, ticket.TicketID, '', marcarProgreso))),
+      ])
+
+      const newEvidenciaLinks = [evidenciaLinks, linksEvidencias.filter(Boolean).join(', ')]
+        .filter(Boolean).join(', ')
+      const newDocsProveedor = [docsProveedor, linksDocs.filter(Boolean).join(', ')]
+        .filter(Boolean).join(', ')
+      const newDatosAdjuntos = [datosAdjuntos, linksEjecutivo.filter(Boolean).join(', ')]
+        .filter(Boolean).join(', ')
+
       setEvidenciaLinks(newEvidenciaLinks)
-    }
-
-    let newDocsProveedor = docsProveedor
-    if (nuevosDocsProveedor.length > 0) {
-      const nuevosLinks = await Promise.all(nuevosDocsProveedor.map(file =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = async () => {
-            const res = await fetch('/api/admin/subirevidencia', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ticketId: ticket.TicketID,
-                fileName: `doc_${file.name}`,
-                mimeType: file.type,
-                data: reader.result.split(',')[1]
-              })
-            })
-            const data = await res.json()
-            resolve(data.url || '')
-          }
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-      ))
-      const links = nuevosLinks.filter(Boolean).join(', ')
-      newDocsProveedor = newDocsProveedor ? `${newDocsProveedor}, ${links}` : links
       setDocsProveedor(newDocsProveedor)
-    }
-
-    let newDatosAdjuntos = datosAdjuntos
-    if (nuevosArchivosEjecutivo.length > 0) {
-      const nuevosLinks = await Promise.all(nuevosArchivosEjecutivo.map(file =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = async () => {
-            const res = await fetch('/api/admin/subirevidencia', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                ticketId: ticket.TicketID,
-                fileName: file.name,
-                mimeType: file.type,
-                data: reader.result.split(',')[1]
-              })
-            })
-            const data = await res.json()
-            resolve(data.url || '')
-          }
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-      ))
-      const links = nuevosLinks.filter(Boolean).join(', ')
-      newDatosAdjuntos = newDatosAdjuntos ? `${newDatosAdjuntos}, ${links}` : links
       setDatosAdjuntos(newDatosAdjuntos)
-    }
 
-    await onUpdate(ticket, {
-      Estado: nuevoEstado,
-      Observaciones: observaciones,
-      Prioridad: prioridad,
-      Responsable: responsable,
-      FechaVisita: fechaVisita,
-      FechaHabilitacion: fechaHabilitacion,
-      Turno: turno,
-      Proveedor: proveedor,
-      NroCotizacion: nroCotizacion,
-      MontoCotizacion: montoCotizacion,
-      Evidencias: newEvidenciaLinks,
-      FechaFinalizacion: fechaFinalizacion,
-      NroOrdenCompra: nroOrdenCompra,
-      DocsProveedor: newDocsProveedor,
-      DatosAdjuntos: newDatosAdjuntos,
-    })
-    setSaving(false)
-    onClose()
+      await onUpdate(ticket, {
+        Estado: nuevoEstado,
+        Observaciones: observaciones,
+        Prioridad: prioridad,
+        Responsable: responsable,
+        FechaVisita: fechaVisita,
+        FechaHabilitacion: fechaHabilitacion,
+        Turno: turno,
+        Proveedor: proveedor,
+        NroCotizacion: nroCotizacion,
+        MontoCotizacion: montoCotizacion,
+        Evidencias: newEvidenciaLinks,
+        FechaFinalizacion: fechaFinalizacion,
+        NroOrdenCompra: nroOrdenCompra,
+        DocsProveedor: newDocsProveedor,
+        DatosAdjuntos: newDatosAdjuntos,
+      })
+    } catch (err) {
+      console.error('Error al guardar:', err)
+      alert('Hubo un error guardando los cambios. Revisa la consola.')
+    } finally {
+      setSaving(false)
+      setProgreso({ actual: 0, total: 0 })
+      onClose()
+    }
   }
 
   return (
@@ -335,9 +354,30 @@ function Modal({ ticket, onClose, onUpdate }) {
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
               </div>
             </div>
+
+            {/* Barra de progreso de subida de archivos */}
+            {saving && progreso.total > 0 && (
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs text-blue-700">
+                  <span>Subiendo archivos...</span>
+                  <span className="font-mono">{progreso.actual}/{progreso.total}</span>
+                </div>
+                <div className="w-full bg-blue-100 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${(progreso.actual / progreso.total) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
             <button onClick={handleSave} disabled={saving}
               className="w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
-              {saving ? 'Guardando...' : '✓ Actualizar solicitud'}
+              {saving
+                ? (progreso.total > 0
+                    ? `Subiendo archivos... ${progreso.actual}/${progreso.total}`
+                    : 'Guardando...')
+                : '✓ Actualizar solicitud'}
             </button>
           </div>
 
