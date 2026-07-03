@@ -374,12 +374,6 @@ function Modal({ ticket, onClose, onUpdate }) {
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">N° Orden de Compra</label>
-                <input value={nroOrdenCompra} onChange={e => setNroOrdenCompra(e.target.value)}
-                  placeholder="Ej: OC-2026-001"
-                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
-              <div>
                 <label className="block text-xs text-gray-600 mb-1">Turno</label>
                 <select value={turno} onChange={e => setTurno(e.target.value)}
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
