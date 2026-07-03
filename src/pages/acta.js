@@ -5,7 +5,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwLbjC8aOQ9sZ7x0_CLAySN
 const BORDER = '1.3px solid #000'
 
 export async function getServerSideProps({ query }) {
-  const { ticketId } = query
+  const { ticketId, tipo } = query
   if (!ticketId) return { notFound: true }
 
   try {
@@ -32,13 +32,13 @@ export async function getServerSideProps({ query }) {
       firmaURL: rowsC[1][2] || ''
     } : { nombre: '', dni: '', firmaURL: '' }
 
-    return { props: { ticket, config } }
+    return { props: { ticket, config, tipo: tipo || 'habilitacion' } }
   } catch (e) {
     return { notFound: true }
   }
 }
 
-export default function Acta({ ticket, config }) {
+export default function Acta({ ticket, config, tipo }) {
   const formatFecha = (str) => {
     if (!str) return '_______________'
     if (str.includes('T')) {
@@ -48,17 +48,16 @@ export default function Acta({ ticket, config }) {
     return str.split(',')[0].trim()
   }
 
-const tipo = (ticket.TipoSolicitud || '').toLowerCase()
+const tipoServicio = (ticket.TipoSolicitud || '').toLowerCase()
+const esVisita = tipo === 'visita'
+const esMantenimiento = !esVisita && tipoServicio.includes('mantenim')
+const esTraslado = !esVisita && tipoServicio.includes('traslado')
+const esInstalacion = !esVisita && (tipoServicio.includes('instalac') || (!esMantenimiento && !esTraslado))
+const esOtros = esVisita
 
-const esMantenimiento = tipo.includes('mantenim')
-const esTraslado = tipo.includes('traslado')
-
-const esInstalacion =
-  tipo.includes('instalac') ||
-  (!esMantenimiento && !esTraslado)
-
-const esOtros = false
-
+  const nroOC = tipo === 'visita' ? ticket.NroOrdenCompraVisita : ticket.NroOrdenCompraHabilitacion
+  const fechaServicio = tipo === 'visita' ? ticket.FechaVisita : ticket.FechaHabilitacion
+  const fechaFinalizacion = tipo === 'visita' ? ticket.FechaFinalizacionVisita : ticket.FechaFinalizacionHabilitacion
   const headerCell = { padding: '6px 8px', textAlign: 'center', fontWeight: 'bold' }
   const valueCell = { padding: '8px', textAlign: 'center' }
 
@@ -139,8 +138,8 @@ const esOtros = false
             <div style={{ flex: 1, ...headerCell }}>AREA</div>
           </div>
           <div style={{ display: 'flex', borderBottom: BORDER }}>
-            <div style={{ flex: 1, borderRight: BORDER, ...valueCell }}>{ticket.NroOrdenCompra || '_______________'}</div>
-            <div style={{ flex: 1, borderRight: BORDER, ...valueCell }}>{formatFecha(ticket.FechaHabilitacion)}</div>
+            <div style={{ flex: 1, borderRight: BORDER, ...valueCell }}>{nroOC || '_______________'}</div>
+            <div style={{ flex: 1, borderRight: BORDER, ...valueCell }}>{formatFecha(fechaServicio)}</div>
             <div style={{ flex: 1, ...valueCell }}>RETAIL</div>
           </div>
 
@@ -220,7 +219,7 @@ const esOtros = false
                 FECHA DE FINALIZACIÓN DEL SERVICIO
               </div>
               <div style={{ borderBottom: BORDER, padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>
-                {formatFecha(ticket.FechaFinalizacion || ticket.FechaHabilitacion)}
+                {formatFecha(fechaFinalizacion || fechaServicio)}
               </div>
               <div style={{ padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '11px' }}>
                 NOMBRE Y FIRMA DEL USUARIO RESPONSABLE

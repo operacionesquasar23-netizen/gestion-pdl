@@ -143,10 +143,14 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [progreso, setProgreso] = useState({ actual: 0, total: 0 })
   const [evidencias, setEvidencias] = useState([])
   const [evidenciaLinks, setEvidenciaLinks] = useState(ticket.Evidencias || '')
-  const [fechaFinalizacion, setFechaFinalizacion] = useState(
-  ticket.FechaFinalizacion ? ticket.FechaFinalizacion.split('T')[0].split('/').reverse().join('-') : ''
+  const [fechaFinalizacionVisita, setFechaFinalizacionVisita] = useState(
+  ticket.FechaFinalizacionVisita ? ticket.FechaFinalizacionVisita.split('T')[0].split('/').reverse().join('-') : ''
   )
-  const [nroOrdenCompra, setNroOrdenCompra] = useState(ticket.NroOrdenCompra || '')
+  const [nroOrdenCompraVisita, setNroOrdenCompraVisita] = useState(ticket.NroOrdenCompraVisita || '')
+  const [fechaFinalizacionHabilitacion, setFechaFinalizacionHabilitacion] = useState(
+  ticket.FechaFinalizacionHabilitacion ? ticket.FechaFinalizacionHabilitacion.split('T')[0].split('/').reverse().join('-') : ''
+  )
+  const [nroOrdenCompraHabilitacion, setNroOrdenCompraHabilitacion] = useState(ticket.NroOrdenCompraHabilitacion || '')
   const [docsProveedor, setDocsProveedor] = useState(ticket.DocsProveedor || '')
   const [nuevosDocsProveedor, setNuevosDocsProveedor] = useState([])
   const [nuevosArchivosEjecutivo, setNuevosArchivosEjecutivo] = useState([])
@@ -212,8 +216,10 @@ function Modal({ ticket, onClose, onUpdate }) {
         NroCotizacionHabilitacion: nroCotizacionHabilitacion,
         MontoCotizacionHabilitacion: montoCotizacionHabilitacion,
         Evidencias: newEvidenciaLinks,
-        FechaFinalizacion: fechaFinalizacion,
-        NroOrdenCompra: nroOrdenCompra,
+        FechaFinalizacionVisita: fechaFinalizacionVisita,
+        NroOrdenCompraVisita: nroOrdenCompraVisita,
+        FechaFinalizacionHabilitacion: fechaFinalizacionHabilitacion,
+        NroOrdenCompraHabilitacion: nroOrdenCompraHabilitacion,
         DocsProveedor: newDocsProveedor,
         DatosAdjuntos: newDatosAdjuntos,
       })
@@ -253,8 +259,10 @@ function Modal({ ticket, onClose, onUpdate }) {
               ['Elemento', ticket.Elemento],
               ['COD', ticket.COD],
               ['Fecha Requerimiento', ticket.FechaRequerimiento],
-              ['Fecha Finalización', ticket.FechaFinalizacion],
-              ['N° Orden de Compra', ticket.NroOrdenCompra],
+              ['Fecha Finalización Visita', ticket.FechaFinalizacionVisita],
+              ['N° OC Visita', ticket.NroOrdenCompraVisita],
+              ['Fecha Finalización Habilitación', ticket.FechaFinalizacionHabilitacion],
+              ['N° OC Habilitación', ticket.NroOrdenCompraHabilitacion],
               ['N° Cotización Visita', ticket.NroCotizacionVisita],
               ['Monto Cotización Visita', ticket.MontoCotizacionVisita ? `S/ ${ticket.MontoCotizacionVisita}` : '—'],
               ['N° Cotización Habilitación', ticket.NroCotizacionHabilitacion],
@@ -344,8 +352,25 @@ function Modal({ ticket, onClose, onUpdate }) {
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Fecha Finalización del Servicio</label>
-                <input type="date" value={fechaFinalizacion} onChange={e => setFechaFinalizacion(e.target.value)}
+                <label className="block text-xs text-gray-600 mb-1">Fecha Finalización Visita</label>
+                <input type="date" value={fechaFinalizacionVisita} onChange={e => setFechaFinalizacionVisita(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">N° OC Visita</label>
+                <input value={nroOrdenCompraVisita} onChange={e => setNroOrdenCompraVisita(e.target.value)}
+                  placeholder="Ej: OC-V-2026-001"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Fecha Finalización Habilitación</label>
+                <input type="date" value={fechaFinalizacionHabilitacion} onChange={e => setFechaFinalizacionHabilitacion(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">N° OC Habilitación</label>
+                <input value={nroOrdenCompraHabilitacion} onChange={e => setNroOrdenCompraHabilitacion(e.target.value)}
+                  placeholder="Ej: OC-H-2026-001"
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
@@ -479,11 +504,18 @@ function Modal({ ticket, onClose, onUpdate }) {
           )}
 
           {/* Generar Acta de Conformidad */}
-          {ticket.NroOrdenCompra && (
+          {ticket.NroOrdenCompraVisita && (
             <button
-              onClick={() => window.open(`/acta?ticketId=${ticket.TicketID}`, '_blank')}
+              onClick={() => window.open(`/acta?ticketId=${ticket.TicketID}&tipo=visita`, '_blank')}
               className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors">
-              📄 Generar Acta de Conformidad
+              📄 Generar Acta de Conformidad — Visita
+            </button>
+          )}
+          {ticket.NroOrdenCompraHabilitacion && (
+            <button
+              onClick={() => window.open(`/acta?ticketId=${ticket.TicketID}&tipo=habilitacion`, '_blank')}
+              className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors mt-2">
+              📄 Generar Acta de Conformidad — Habilitación
             </button>
           )}
 
