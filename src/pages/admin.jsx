@@ -128,8 +128,10 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [prioridad, setPrioridad] = useState(ticket.Prioridad || '')
   const [responsable, setResponsable] = useState(ticket.Responsable || '')
   const [proveedor, setProveedor] = useState(ticket.Proveedor || '')
-  const [nroCotizacion, setNroCotizacion] = useState(ticket.NroCotizacion || '')
-  const [montoCotizacion, setMontoCotizacion] = useState(ticket.MontoCotizacion || '')
+  const [nroCotizacionVisita, setNroCotizacionVisita] = useState(ticket.NroCotizacionVisita || '')
+  const [montoCotizacionVisita, setMontoCotizacionVisita] = useState(ticket.MontoCotizacionVisita || '')
+  const [nroCotizacionHabilitacion, setNroCotizacionHabilitacion] = useState(ticket.NroCotizacionHabilitacion || '')
+  const [montoCotizacionHabilitacion, setMontoCotizacionHabilitacion] = useState(ticket.MontoCotizacionHabilitacion || '')
   const [fechaVisita, setFechaVisita] = useState(
     ticket.FechaVisita ? ticket.FechaVisita.split('T')[0].split('/').reverse().join('-') : ''
   )
@@ -205,8 +207,10 @@ function Modal({ ticket, onClose, onUpdate }) {
         FechaHabilitacion: fechaHabilitacion,
         Turno: turno,
         Proveedor: proveedor,
-        NroCotizacion: nroCotizacion,
-        MontoCotizacion: montoCotizacion,
+        NroCotizacionVisita: nroCotizacionVisita,
+        MontoCotizacionVisita: montoCotizacionVisita,
+        NroCotizacionHabilitacion: nroCotizacionHabilitacion,
+        MontoCotizacionHabilitacion: montoCotizacionHabilitacion,
         Evidencias: newEvidenciaLinks,
         FechaFinalizacion: fechaFinalizacion,
         NroOrdenCompra: nroOrdenCompra,
@@ -251,8 +255,10 @@ function Modal({ ticket, onClose, onUpdate }) {
               ['Fecha Requerimiento', ticket.FechaRequerimiento],
               ['Fecha Finalización', ticket.FechaFinalizacion],
               ['N° Orden de Compra', ticket.NroOrdenCompra],
-              ['N° Cotización', ticket.NroCotizacion],
-              ['Monto Cotización', ticket.MontoCotizacion ? `S/ ${ticket.MontoCotizacion}` : '—'],
+              ['N° Cotización Visita', ticket.NroCotizacionVisita],
+              ['Monto Cotización Visita', ticket.MontoCotizacionVisita ? `S/ ${ticket.MontoCotizacionVisita}` : '—'],
+              ['N° Cotización Habilitación', ticket.NroCotizacionHabilitacion],
+              ['Monto Cotización Habilitación', ticket.MontoCotizacionHabilitacion ? `S/ ${ticket.MontoCotizacionHabilitacion}` : '—'],
             ].map(([lbl, val]) => (
               <div key={lbl}>
                 <p className="text-xs text-gray-400 mb-0.5">{lbl}</p>
@@ -295,9 +301,27 @@ function Modal({ ticket, onClose, onUpdate }) {
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">N° Cotización</label>
-                <input value={nroCotizacion} onChange={e => setNroCotizacion(e.target.value)}
-                  placeholder="Ej: COT-001"
+                <label className="block text-xs text-gray-600 mb-1">N° Cotización Visita</label>
+                <input value={nroCotizacionVisita} onChange={e => setNroCotizacionVisita(e.target.value)}
+                  placeholder="Ej: COT-V-001"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Monto Cotización Visita (S/)</label>
+                <input value={montoCotizacionVisita} onChange={e => setMontoCotizacionVisita(e.target.value)}
+                  type="number" placeholder="Ej: 500"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">N° Cotización Habilitación</label>
+                <input value={nroCotizacionHabilitacion} onChange={e => setNroCotizacionHabilitacion(e.target.value)}
+                  placeholder="Ej: COT-H-001"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Monto Cotización Habilitación (S/)</label>
+                <input value={montoCotizacionHabilitacion} onChange={e => setMontoCotizacionHabilitacion(e.target.value)}
+                  type="number" placeholder="Ej: 2500"
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
