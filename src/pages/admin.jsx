@@ -309,6 +309,15 @@ function Modal({ ticket, onClose, onUpdate }) {
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
+                <label className="block text-xs text-gray-600 mb-1">Proveedor</label>
+                <select value={proveedor} onChange={e => setProveedor(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">Sin asignar</option>
+                  <option value="CARZE">CARZE</option>
+                  <option value="MPESSAC">MPESSAC</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-xs text-gray-600 mb-1">N° Cotización Visita</label>
                 <input value={nroCotizacionVisita} onChange={e => setNroCotizacionVisita(e.target.value)}
                   placeholder="Ej: COT-V-001"
@@ -333,15 +342,6 @@ function Modal({ ticket, onClose, onUpdate }) {
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Proveedor</label>
-                <select value={proveedor} onChange={e => setProveedor(e.target.value)}
-                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option value="">Sin asignar</option>
-                  <option value="CARZE">CARZE</option>
-                  <option value="MPESSAC">MPESSAC</option>
-                </select>
-              </div>
-              <div>
                 <label className="block text-xs text-gray-600 mb-1">Fecha Visita</label>
                 <input type="date" value={fechaVisita} onChange={e => setFechaVisita(e.target.value)}
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -357,14 +357,14 @@ function Modal({ ticket, onClose, onUpdate }) {
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">N° OC Visita</label>
-                <input value={nroOrdenCompraVisita} onChange={e => setNroOrdenCompraVisita(e.target.value)}
-                  placeholder="Ej: OC-V-2026-001"
+                <label className="block text-xs text-gray-600 mb-1">Fecha Finalización Habilitación</label>
+                <input type="date" value={fechaFinalizacionHabilitacion} onChange={e => setFechaFinalizacionHabilitacion(e.target.value)}
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1">Fecha Finalización Habilitación</label>
-                <input type="date" value={fechaFinalizacionHabilitacion} onChange={e => setFechaFinalizacionHabilitacion(e.target.value)}
+                <label className="block text-xs text-gray-600 mb-1">N° OC Visita</label>
+                <input value={nroOrdenCompraVisita} onChange={e => setNroOrdenCompraVisita(e.target.value)}
+                  placeholder="Ej: OC-V-2026-001"
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
