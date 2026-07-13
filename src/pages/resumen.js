@@ -4,23 +4,24 @@ import Head from 'next/head'
 const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbwLbjC8aOQ9sZ7x0_CLAySNOx5ib7xu65R2KsQlkK-0hIKZIZ4Y1_g_Ggt3rASxd6-U/exec"
 
 const ESTADOS = [
-  { id: 'Pendiente revisión',      short: 'Pendiente revisión' },
-  { id: 'Visita programada',       short: 'Visita programada' },
-  { id: 'Visita realizada',        short: 'Visita realizada' },
-  { id: 'Cotización enviada',      short: 'Cotización enviada' },
-  { id: 'Cotización aprobada',     short: 'Cotización aprobada' },
-  { id: 'Habilitación programada', short: 'Habilitación programada' },
+  { id: 'Pendiente revisión',        short: 'Pendiente revisión' },
+  { id: 'Visita programada',         short: 'Visita programada' },
+  { id: 'Visita realizada',          short: 'Visita realizada' },
+  { id: 'Cotización enviada',        short: 'Cotización enviada' },
+  { id: 'Cotización aprobada',       short: 'Cotización aprobada' },
+  { id: 'Habilitación programada',   short: 'Habilitación programada' },
+  { id: 'Rechazado por tienda',      short: 'Rechazado por tienda' },
   { id: 'Habilitación reprogramada', short: 'Habilitación reprogramada' },
-  { id: 'Habilitación realizada',  short: 'Habilitación realizada' },
-  { id: 'Evidencias recibidas',    short: 'Evidencias recibidas' },
-  { id: 'OC solicitada',           short: 'OC solicitada' },
-  { id: 'AC y OC entregadas',      short: 'AC y OC entregadas' },
-  { id: 'Cerrado',                 short: 'Cerrado' },
+  { id: 'Habilitación realizada',    short: 'Habilitación realizada' },
+  { id: 'Evidencias recibidas',      short: 'Evidencias recibidas' },
+  { id: 'OC solicitada',             short: 'OC solicitada' },
+  { id: 'AC y OC entregadas',        short: 'AC y OC entregadas' },
+  { id: 'Cerrado',                   short: 'Cerrado' },
 ]
 
 // Estados que no forman parte del camino lineal principal pero existen
 const ESTADOS_ALTERNOS = ['Cotización rechazada', 'En renegociación']
-
+  
 function getStepIndex(estado) {
   const idx = ESTADOS.findIndex(e => e.id === estado)
   return idx === -1 ? 0 : idx

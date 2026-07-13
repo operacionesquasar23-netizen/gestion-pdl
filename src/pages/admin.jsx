@@ -10,6 +10,7 @@ const ESTADOS = [
   { id: 'Cotización rechazada',    color: 'bg-red-100 text-red-800' },
   { id: 'En renegociación',        color: 'bg-purple-100 text-purple-800' },
   { id: 'Habilitación programada', color: 'bg-cyan-100 text-cyan-800' },
+  { id: 'Rechazado por tienda',    color: 'bg-red-100 text-red-800' },
   { id: 'Habilitación reprogramada',color: 'bg-pink-100 text-pink-800' },
   { id: 'Habilitación realizada',  color: 'bg-lime-100 text-lime-800' },
   { id: 'Evidencias recibidas',    color: 'bg-emerald-100 text-emerald-800' },
