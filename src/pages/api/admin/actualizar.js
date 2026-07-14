@@ -2,6 +2,19 @@ import { getSheet } from '../../../lib/supabase'
 
 const API_URL = "https://script.google.com/macros/s/AKfycbwLbjC8aOQ9sZ7x0_CLAySNOx5ib7xu65R2KsQlkK-0hIKZIZ4Y1_g_Ggt3rASxd6-U/exec"
 
+function formatearFecha(str) {
+  if (!str) return ''
+  if (str.includes('T')) {
+    const d = new Date(str)
+    return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`
+  }
+  if (str.includes('-') && str.length === 10) {
+    const [y, m, d] = str.split('-')
+    return `${d}/${m}/${y}`
+  }
+  return str
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
 
@@ -21,6 +34,12 @@ export default async function handler(req, res) {
     if (updates.Estado) {
       updates.FechaUltimoEstado = now
     }
+
+    // Formatear fechas
+    const camposFecha = ['FechaVisita', 'FechaHabilitacion', 'FechaFinalizacionVisita', 'FechaFinalizacionHabilitacion']
+    camposFecha.forEach(campo => {
+      if (updates[campo]) updates[campo] = formatearFecha(updates[campo])
+    })
 
     const rows = await getSheet('Solicitudes')
     if (rows.length === 0) return res.status(404).json({ error: 'No hay datos' })
