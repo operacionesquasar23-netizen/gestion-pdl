@@ -152,6 +152,11 @@ function Modal({ ticket, onClose, onUpdate }) {
   ticket.FechaFinalizacionHabilitacion ? ticket.FechaFinalizacionHabilitacion.split('T')[0].split('/').reverse().join('-') : ''
   )
   const [nroOrdenCompraHabilitacion, setNroOrdenCompraHabilitacion] = useState(ticket.NroOrdenCompraHabilitacion || '')
+  const [tipoToma, setTipoToma] = useState(ticket.TipoToma || '')
+  const [tipoEjecucion, setTipoEjecucion] = useState(ticket.TipoEjecucion || '')
+  const [origenPuntoElectrico, setOrigenPuntoElectrico] = useState(ticket.OrigenPuntoElectrico || '')
+  const [metrajeCable, setMetrajeCable] = useState(ticket.MetrajeCable || '')
+  const [razonSocial, setRazonSocial] = useState(ticket.RazonSocial || '')
   const [docsProveedor, setDocsProveedor] = useState(ticket.DocsProveedor || '')
   const [nuevosDocsProveedor, setNuevosDocsProveedor] = useState([])
   const [nuevosArchivosEjecutivo, setNuevosArchivosEjecutivo] = useState([])
@@ -221,6 +226,11 @@ function Modal({ ticket, onClose, onUpdate }) {
         NroOrdenCompraVisita: nroOrdenCompraVisita,
         FechaFinalizacionHabilitacion: fechaFinalizacionHabilitacion,
         NroOrdenCompraHabilitacion: nroOrdenCompraHabilitacion,
+        TipoToma: tipoToma,
+        TipoEjecucion: tipoEjecucion,
+        OrigenPuntoElectrico: origenPuntoElectrico,
+        MetrajeCable: metrajeCable,
+        RazonSocial: razonSocial,
         DocsProveedor: newDocsProveedor,
         DatosAdjuntos: newDatosAdjuntos,
       })
@@ -384,6 +394,49 @@ function Modal({ ticket, onClose, onUpdate }) {
                   <option value="Al cierre de tienda">Al cierre de tienda</option>
                   <option value="En amanecida">En amanecida</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Razón Social</label>
+                <select value={razonSocial} onChange={e => setRazonSocial(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">Sin asignar</option>
+                  <option value="GMRC">GMRC</option>
+                  <option value="ROCEGO">ROCEGO</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Tipo de Toma</label>
+                <select value={tipoToma} onChange={e => setTipoToma(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">Sin asignar</option>
+                  <option value="Empotrada">Empotrada</option>
+                  <option value="Convencional">Convencional</option>
+                  <option value="Hidrobox">Hidrobox</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Tipo de Ejecución</label>
+                <select value={tipoEjecucion} onChange={e => setTipoEjecucion(e.target.value)}
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">Sin asignar</option>
+                  <option value="Expansión">Expansión</option>
+                  <option value="Picado de piso">Picado de piso</option>
+                  <option value="Trabajo de altura">Trabajo de altura</option>
+                  <option value="Cambio de toma">Cambio de toma</option>
+                  <option value="Cambio de cable">Cambio de cable</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Origen de punto eléctrico</label>
+                <input value={origenPuntoElectrico} onChange={e => setOrigenPuntoElectrico(e.target.value)}
+                  placeholder="Ej: Tablero principal"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Metraje de cable</label>
+                <input value={metrajeCable} onChange={e => setMetrajeCable(e.target.value)}
+                  placeholder="Ej: 15m"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div className="col-span-2">
                 <label className="block text-xs text-gray-600 mb-1">Observaciones internas</label>
