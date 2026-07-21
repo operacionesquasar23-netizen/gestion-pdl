@@ -122,7 +122,7 @@ const esOtros = esVisita
         {/* Header con logo */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
           <img src="/logo1.png" alt="Quasar" style={{ height: '70px', objectFit: 'contain' }} />
-          <p style={{ margin: 0, fontWeight: 'bold', fontSize: '15px' }}>ROCEGO S.A.</p>
+          <p style={{ margin: 0, fontWeight: 'bold', fontSize: '15px' }}>{ticket.RazonSocial ? `${ticket.RazonSocial} S.A.` : 'GMRC S.A.'}</p>
         </div>
         <h1 style={{ textAlign: 'center', fontSize: '19px', fontWeight: 'bold', margin: '0 0 18px' }}>
           ACTA DE CONFORMIDAD
