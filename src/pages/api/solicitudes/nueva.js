@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
 
   try {
-    const { cliente, tienda, ejecutivo, tipoSolicitud, marca, campana, elemento, cod, descripcion, files, asunto } = req.body
+    const { cliente, tienda, ejecutivo, tipoSolicitud, marca, campana, elemento, cod, descripcion, files, asunto, cotizacionQuasar } = req.body
     console.log('files recibidos en API:', req.body.files ? req.body.files.length : 'ninguno')
 
     if (!cliente || !tienda || !ejecutivo) {
@@ -55,6 +55,7 @@ export default async function handler(req, res) {
       campana || '',        // Campaña
       elemento || '',       // Elemento
       tienda,               // Tienda
+      cotizacionQuasar || '', // CotizacionQuasar
       tipoSolicitud || '',  // TipoSolicitud
       descripcion || '',    // Descripcion
       ejecutivo,            // Ejecutivo
