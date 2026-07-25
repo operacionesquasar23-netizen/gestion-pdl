@@ -97,6 +97,39 @@ export default function Resumen() {
     return matchE && matchEj && matchQ
   })
 
+  const descargarExcel = () => {
+    const columnas = [
+      'TicketID','FechaRequerimiento','Cliente','COD','Marca','Campaña','Elemento','Tienda',
+      'CotizacionQuasar','TipoSolicitud','Ejecutivo','Estado','Proveedor',
+      'NroCotizacionVisita','MontoCotizacionVisita','NroCotizacionHabilitacion','MontoCotizacionHabilitacion',
+      'FechaFinalizacionVisita','NroOrdenCompraVisita','FechaFinalizacionHabilitacion','NroOrdenCompraHabilitacion',
+      'TipoToma','TipoEjecucion','OrigenPuntoElectrico','MetrajeCable','RazonSocial','Nochero','CostoNochero',
+      'LinkTicket'
+    ]
+
+    const filas = filtered.map(t => [
+      t.TicketID, t.FechaRequerimiento, t.Cliente, t.COD, t.Marca, t.Campaña, t.Elemento, t.Tienda,
+      t.CotizacionQuasar, t.TipoSolicitud, t.Ejecutivo, t.Estado, t.Proveedor,
+      t.NroCotizacionVisita, t.MontoCotizacionVisita, t.NroCotizacionHabilitacion, t.MontoCotizacionHabilitacion,
+      t.FechaFinalizacionVisita, t.NroOrdenCompraVisita, t.FechaFinalizacionHabilitacion, t.NroOrdenCompraHabilitacion,
+      t.TipoToma, t.TipoEjecucion, t.OrigenPuntoElectrico, t.MetrajeCable, t.RazonSocial, t.Nochero, t.CostoNochero,
+      `https://gestion-pdl.vercel.app/seguimiento/${t.TicketID}`
+    ])
+
+    const csvContent = [columnas, ...filas]
+      .map(row => row.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+
+    const BOM = '\uFEFF'
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `PDL_Resumen_${new Date().toLocaleDateString('es-PE').replace(/\//g,'-')}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <>
       <Head><title>Resumen de Solicitudes · PDL</title></Head>
@@ -117,6 +150,10 @@ export default function Resumen() {
             <button onClick={fetchData}
               className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               🔄 Actualizar
+            </button>
+            <button onClick={descargarExcel}
+              className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+              📥 Descargar Excel
             </button>
           </div>
         </div>
