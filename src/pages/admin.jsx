@@ -157,6 +157,8 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [origenPuntoElectrico, setOrigenPuntoElectrico] = useState(ticket.OrigenPuntoElectrico || '')
   const [metrajeCable, setMetrajeCable] = useState(ticket.MetrajeCable || '')
   const [razonSocial, setRazonSocial] = useState(ticket.RazonSocial || '')
+  const [nochero, setNochero] = useState(ticket.Nochero || '')
+  const [costoNochero, setCostoNochero] = useState(ticket.CostoNochero || '')
   const [docsProveedor, setDocsProveedor] = useState(ticket.DocsProveedor || '')
   const [nuevosDocsProveedor, setNuevosDocsProveedor] = useState([])
   const [nuevosArchivosEjecutivo, setNuevosArchivosEjecutivo] = useState([])
@@ -231,6 +233,8 @@ function Modal({ ticket, onClose, onUpdate }) {
         OrigenPuntoElectrico: origenPuntoElectrico,
         MetrajeCable: metrajeCable,
         RazonSocial: razonSocial,
+        Nochero: nochero,
+        CostoNochero: costoNochero,
         DocsProveedor: newDocsProveedor,
         DatosAdjuntos: newDatosAdjuntos,
       })
@@ -264,6 +268,7 @@ function Modal({ ticket, onClose, onUpdate }) {
               ['Ejecutivo', ticket.Ejecutivo],
               ['Cliente', ticket.Cliente],
               ['Tienda', ticket.Tienda],
+              ['Cotización Quasar', ticket.CotizacionQuasar],
               ['Tipo Solicitud', ticket.TipoSolicitud],
               ['Marca', ticket.Marca],
               ['Campaña', ticket.Campaña],
@@ -403,6 +408,18 @@ function Modal({ ticket, onClose, onUpdate }) {
                   <option value="GMRC">GMRC</option>
                   <option value="ROCEGO">ROCEGO</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Nochero</label>
+                <input value={nochero} onChange={e => setNochero(e.target.value)}
+                  placeholder="Nombre del nochero"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Costo Nochero (S/)</label>
+                <input value={costoNochero} onChange={e => setCostoNochero(e.target.value)}
+                  type="number" placeholder="Ej: 150"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
                 <label className="block text-xs text-gray-600 mb-1">Tipo de Toma</label>
