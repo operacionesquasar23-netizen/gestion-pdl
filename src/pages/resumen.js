@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import * as XLSX from 'xlsx'
 
 const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbwLbjC8aOQ9sZ7x0_CLAySNOx5ib7xu65R2KsQlkK-0hIKZIZ4Y1_g_Ggt3rASxd6-U/exec"
 
@@ -107,27 +108,46 @@ export default function Resumen() {
       'LinkTicket'
     ]
 
-    const filas = filtered.map(t => [
-      t.TicketID, t.FechaRequerimiento, t.Cliente, t.COD, t.Marca, t.Campaña, t.Elemento, t.Tienda,
-      t.CotizacionQuasar, t.TipoSolicitud, t.Ejecutivo, t.Estado, t.Proveedor,
-      t.NroCotizacionVisita, t.MontoCotizacionVisita, t.NroCotizacionHabilitacion, t.MontoCotizacionHabilitacion,
-      t.FechaFinalizacionVisita, t.NroOrdenCompraVisita, t.FechaFinalizacionHabilitacion, t.NroOrdenCompraHabilitacion,
-      t.TipoToma, t.TipoEjecucion, t.OrigenPuntoElectrico, t.MetrajeCable, t.RazonSocial, t.Nochero, t.CostoNochero,
-      `https://gestion-pdl.vercel.app/seguimiento/${t.TicketID}`
-    ])
+    const filas = filtered.map(t => ({
+      TicketID: t.TicketID,
+      FechaRequerimiento: t.FechaRequerimiento,
+      Cliente: t.Cliente,
+      COD: t.COD,
+      Marca: t.Marca,
+      Campaña: t.Campaña,
+      Elemento: t.Elemento,
+      Tienda: t.Tienda,
+      CotizacionQuasar: t.CotizacionQuasar,
+      TipoSolicitud: t.TipoSolicitud,
+      Ejecutivo: t.Ejecutivo,
+      Estado: t.Estado,
+      Proveedor: t.Proveedor,
+      NroCotizacionVisita: t.NroCotizacionVisita,
+      MontoCotizacionVisita: t.MontoCotizacionVisita,
+      NroCotizacionHabilitacion: t.NroCotizacionHabilitacion,
+      MontoCotizacionHabilitacion: t.MontoCotizacionHabilitacion,
+      FechaFinalizacionVisita: t.FechaFinalizacionVisita,
+      NroOrdenCompraVisita: t.NroOrdenCompraVisita,
+      FechaFinalizacionHabilitacion: t.FechaFinalizacionHabilitacion,
+      NroOrdenCompraHabilitacion: t.NroOrdenCompraHabilitacion,
+      TipoToma: t.TipoToma,
+      TipoEjecucion: t.TipoEjecucion,
+      OrigenPuntoElectrico: t.OrigenPuntoElectrico,
+      MetrajeCable: t.MetrajeCable,
+      RazonSocial: t.RazonSocial,
+      Nochero: t.Nochero,
+      CostoNochero: t.CostoNochero,
+      LinkTicket: `https://gestion-pdl.vercel.app/seguimiento/${t.TicketID}`
+    }))
 
-    const csvContent = [columnas, ...filas]
-      .map(row => row.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(','))
-      .join('\n')
+    const ws = XLSX.utils.json_to_sheet(filas, { header: columnas })
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'PDL Resumen')
 
-    const BOM = '\uFEFF'
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `PDL_Resumen_${new Date().toLocaleDateString('es-PE').replace(/\//g,'-')}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
+    // Ancho de columnas automático
+    ws['!cols'] = columnas.map(c => ({ wch: Math.max(c.length, 15) }))
+
+    XLSX.writeFile(wb, `PDL_Resumen_${new Date().toLocaleDateString('es-PE').replace(/\//g,'-')}.xlsx`)
   }
 
   return (
