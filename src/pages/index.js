@@ -29,27 +29,51 @@ export default function Home() {
       </Head>
       <div className="min-h-screen bg-slate-50 flex flex-col">
 
-        {/* Header */}
-        <div className="bg-brand text-white px-6 py-5">
-          <div className="max-w-5xl mx-auto flex items-center gap-4">
-            <Image src="/logo.png" alt="Quasar" width={56} height={56} className="rounded-full" />
-            <div>
-              <h1 className="text-xl font-bold">Quasar</h1>
-              <p className="text-blue-200 text-sm">Sistema de Gestión de Puntos de Luz</p>
+        {/* Header + Hero unificado */}
+        <div
+          className="relative overflow-hidden text-white"
+          style={{
+            height: "300px",
+            backgroundImage: "url('/mao-header.png')",
+            backgroundSize: "100% 100%",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center"
+          }}
+        >
+          {/* Header */}
+          <div className="relative z-10 px-6 py-5">
+            <div className="max-w-5xl mx-auto flex items-center gap-4">
+              {/* Logo de Quasar */}
+              <div className="relative w-14 h-14">
+                <Image
+                  src="/logo.png"
+                  alt="Quasar Logo"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">Quasar</h1>
+                <p className="text-blue-200 text-sm">
+                  Sistema de Gestión de Puntos de Luz
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero */}
+          <div className="relative z-10 px-6 pt-4">
+            <div className="max-w-5xl mx-auto text-center">
+              <h1 className="text-5xl font-bold mb-3">MAO</h1>
+              <p className="text-blue-200 text-lg">
+                Gestión integral de puntos de luz en tiendas
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Hero */}
-        <div className="bg-brand text-white px-6 pb-16 pt-6">
-          <div className="max-w-5xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-2">MAO</h1>
-            <h2 className="text-3xl font-bold mb-3">Gestión integral de<br />puntos de luz en tiendas</h2>
-          </div>
-        </div>
-
         {/* Cards */}
-        <div className="max-w-7xl mx-auto px-4 -mt-8 pb-12 w-full">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 -mt-8 pb-12 w-full">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             {/* Nueva Solicitud */}
