@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 
 const ESTADOS = [
   { id: 'Pendiente revisión',      icon: '⏳', done: false },
@@ -118,9 +119,9 @@ export default function Seguimiento({ ticket, historial, code }) {
               <h1 className="text-lg font-semibold">PDL — Seguimiento de Solicitud</h1>
               <p className="text-blue-200 text-xs font-mono">{code}</p>
             </div>
-            <a href="/" className="ml-auto text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+            <Link href="/" className="ml-auto text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               ← Inicio
-            </a>
+            </Link>
           </div>
         </div>
 

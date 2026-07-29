@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 
 const ESTADOS = [
   { id: 'Pendiente revisión',      color: 'bg-amber-100 text-amber-800' },
@@ -695,20 +696,20 @@ export default function Admin() {
             </div>
           </div>
           <div className="flex gap-3">
-            <a href="/" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+            <Link href="/" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               ← Inicio
-            </a>
-            <a href="/configuracion" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+            </Link>
+            <Link href="/configuracion" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               ⚙️ Configuración
-            </a>
+            </Link>
             <button onClick={fetchTickets}
               className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               🔄 Actualizar
             </button>
-            <a href="/nueva-solicitud" target="_blank"
+            <Link href="/nueva-solicitud" target="_blank"
               className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               + Nueva solicitud
-            </a>
+            </Link>
           </div>
         </div>
 

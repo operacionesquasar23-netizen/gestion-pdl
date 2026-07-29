@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export default function Home() {
+  const router = useRouter()
   const [codigo, setCodigo] = useState('')
   const [cod, setCod] = useState('')
   const [buscandoCod, setBuscandoCod] = useState(false)
@@ -10,7 +13,7 @@ export default function Home() {
 
   const handleSeguimiento = () => {
     if (!codigo.trim()) return
-    window.location.href = `/seguimiento/${codigo.trim().toUpperCase()}`
+    router.push(`/seguimiento/${codigo.trim().toUpperCase()}`)
   }
 
   const handleBuscarCod = async () => {
@@ -77,7 +80,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             {/* Nueva Solicitud */}
-            <a href="/nueva-solicitud"
+            <Link href="/nueva-solicitud"
               className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all hover:-translate-y-0.5 group">
               <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-100 transition-colors">
                 📋
@@ -87,7 +90,7 @@ export default function Home() {
               <span className="text-xs font-semibold text-blue-700 group-hover:text-blue-800">
                 Ir al formulario →
               </span>
-            </a>
+            </Link>
 
             {/* Seguimiento */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -133,14 +136,14 @@ export default function Home() {
                   {resultadosCod.length > 0 && (
                     <div className="mt-3 flex flex-col gap-2">
                       {resultadosCod.map((t, i) => (
-                        <a key={i} href={`/seguimiento/${t.TicketID}`}
+                        <Link key={i} href={`/seguimiento/${t.TicketID}`}
                           className="flex items-center justify-between bg-gray-50 hover:bg-blue-50 rounded-lg px-3 py-2 transition-colors">
                           <div>
                             <p className="text-xs font-medium text-gray-900">{t.Asunto}</p>
                             <p className="text-xs text-gray-400">{t.Tienda} · {t.TicketID}</p>
                           </div>
                           <span className="text-xs text-blue-600">Ver →</span>
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   )}
@@ -152,7 +155,7 @@ export default function Home() {
             </div>
 
             {/* Panel Admin */}
-            <a href="/admin"
+            <Link href="/admin"
               className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all hover:-translate-y-0.5 group">
               <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-purple-100 transition-colors">
                 ⚙️
@@ -162,10 +165,10 @@ export default function Home() {
               <span className="text-xs font-semibold text-purple-700 group-hover:text-purple-800">
                 Acceder al panel →
               </span>
-            </a>
+            </Link>
 
           {/* Dashboard */}
-          <a href="/dashboard"
+          <Link href="/dashboard"
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all hover:-translate-y-0.5 group">
             <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-amber-100 transition-colors">
               📊
@@ -175,10 +178,10 @@ export default function Home() {
             <span className="text-xs font-semibold text-amber-700 group-hover:text-amber-800">
               Ver métricas →
             </span>
-          </a>    
+          </Link>    
 
           {/* Calendario */}
-          <a href="/calendario"
+          <Link href="/calendario"
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all hover:-translate-y-0.5 group">
             <div className="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-teal-100 transition-colors">
               📅
@@ -188,10 +191,10 @@ export default function Home() {
             <span className="text-xs font-semibold text-teal-700 group-hover:text-teal-800">
               Ver calendario →
             </span>
-          </a>    
+          </Link>    
 
           {/* Resumen */}
-          <a href="/resumen"
+          <Link href="/resumen"
             className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-all hover:-translate-y-0.5 group">
             <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:bg-blue-100 transition-colors">
               📋
@@ -201,7 +204,7 @@ export default function Home() {
             <span className="text-xs font-semibold text-blue-700 group-hover:text-blue-800">
               Ver resumen →
             </span>
-          </a>
+          </Link>
 
         </div>
 
@@ -233,8 +236,8 @@ export default function Home() {
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <p className="text-xs text-gray-400">© 2026 Quasar · Sistema de Gestión PDL</p>
             <div className="flex items-center gap-4">
-              <a href="/nueva-solicitud" className="text-xs text-gray-400 hover:text-blue-700">Nueva Solicitud</a>
-              <a href="/admin" className="text-xs text-gray-400 hover:text-blue-700">Operaciones</a>
+              <Link href="/nueva-solicitud" className="text-xs text-gray-400 hover:text-blue-700">Nueva Solicitud</Link>
+              <Link href="/admin" className="text-xs text-gray-400 hover:text-blue-700">Operaciones</Link>
             </div>
           </div>
         </div>

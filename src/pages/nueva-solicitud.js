@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Head from 'next/head'
+import Link from 'next/link'
 
 const MAX_FILES = 10
 const MAX_MB = 20
@@ -102,10 +103,10 @@ export default function NuevaSolicitud() {
           <p className="text-xs text-blue-600 mb-1 font-medium">Código de seguimiento</p>
           <p className="text-2xl font-mono font-semibold text-blue-800">{success}</p>
         </div>
-        <a href={`/seguimiento/${success}`}
+        <Link href={`/seguimiento/${success}`}
           className="block w-full bg-blue-700 hover:bg-blue-800 text-white rounded-xl py-3 text-sm font-semibold transition-colors mb-3">
           Ver estado de mi solicitud →
-        </a>
+        </Link>
         <a href={`mailto:anny.chuquipiondo@quasar-btl.pe?cc=paul.najarro@quasar-btl.pe,ivan.castro@quasar-btl.pe&subject=REQUERIMIENTO DE ${successData.tipoSolicitud} - ${successData.asunto}&body=Buen día Estimado,%0D%0A%0D%0ATipo de requerimiento: ${successData.tipoSolicitud}%0D%0AElemento: ${successData.elemento}%0D%0AMarca: ${successData.marca}%0D%0ACOD: ${successData.cod}%0D%0ATienda: ${successData.tienda}%0D%0ADescripción: ${successData.descripcion}%0D%0A%0D%0AArchivos adjuntos en el sistema:%0D%0Ahttps://gestion-pdl.vercel.app/seguimiento/${success}`}
           className="block w-full bg-green-600 hover:bg-green-700 text-white rounded-xl py-3 text-sm font-semibold transition-colors mb-3">
           📧 Enviar correo a Operaciones
@@ -132,9 +133,9 @@ export default function NuevaSolicitud() {
               <h1 className="text-lg font-semibold">PDL — Sistema de Gestión</h1>
               <p className="text-blue-200 text-xs">Nueva Solicitud de Habilitación</p>
             </div>
-            <a href="/" className="ml-auto text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+            <Link href="/" className="ml-auto text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               ← Inicio
-            </a>
+            </Link>
           </div>
         </div>
 

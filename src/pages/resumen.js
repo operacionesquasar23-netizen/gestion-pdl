@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import * as XLSX from 'xlsx'
+import Link from 'next/link'
 
 const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbwLbjC8aOQ9sZ7x0_CLAySNOx5ib7xu65R2KsQlkK-0hIKZIZ4Y1_g_Ggt3rASxd6-U/exec"
 
@@ -164,9 +165,9 @@ export default function Resumen() {
             </div>
           </div>
           <div className="flex gap-3">
-            <a href="/" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+            <Link href="/" className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               ← Inicio
-            </a>
+            </Link>
             <button onClick={fetchData}
               className="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors">
               🔄 Actualizar
