@@ -45,7 +45,7 @@ const styles = {
   overflow: 'hidden',
   borderRadius: 8,
   background: '#193465',
-  boxShadow: 'inset 0 0 0 3px #193465',
+  boxShadow: 'inset 0 0 0 6px #193465',
   },
   video: {
     width: '100%',
