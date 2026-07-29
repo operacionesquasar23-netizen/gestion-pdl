@@ -38,14 +38,14 @@ const styles = {
     transition: 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out',
   },
   videoWrapper: {
-  position: 'relative',
-  width: '90vw',
-  maxWidth: 700,
-  aspectRatio: '16 / 9',
-  overflow: 'hidden',
-  borderRadius: 8,
-  background: '#193465',
-  boxShadow: 'inset 0 0 0 6px #193465',
+    position: 'relative',
+    width: '90vw',
+    maxWidth: 700,
+    aspectRatio: '16 / 9',
+    overflow: 'hidden',
+    borderRadius: 8,
+    background: '#193465',
+    transform: 'scale(1.02)',   // zoom leve y CONSTANTE, no solo al final
   },
   video: {
     width: '100%',
