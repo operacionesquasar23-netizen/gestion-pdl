@@ -13,17 +13,11 @@ export default function Splash({ message, fadeOut, onVideoEnd, onVideoNearEnd })
       transform: fadeOut ? 'scale(1.15)' : 'scale(1)',
     }}>
       <div style={styles.videoWrapper}>
-        <video
-          autoPlay
-          muted
-          playsInline
-          onEnded={onVideoEnd}
-          onTimeUpdate={handleTimeUpdate}
-          style={styles.video}
-        >
+        <video autoPlay muted playsInline onTimeUpdate={handleTimeUpdate} style={styles.video}>
           <source src="/videos/splash.mp4" type="video/mp4" />
         </video>
         <div style={styles.rightBorderFix}></div>
+        <div style={styles.bottomBorderFix}></div>
       </div>
       <p style={styles.text}>{message}</p>
     </div>
@@ -63,6 +57,14 @@ const styles = {
     right: 0,
     width: 10,
     height: '100%',
+    background: '#193465',
+  },
+  bottomBorderFix: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: 10,
     background: '#193465',
   },
   text: { color: 'rgba(255,255,255,0.75)', fontSize: 13, margin: 0 },
