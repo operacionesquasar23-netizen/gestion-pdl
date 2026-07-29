@@ -55,7 +55,7 @@ const styles = {
     position: 'absolute',
     top: 0,
     right: 0,
-    width: 10,
+    width: 20,
     height: '100%',
     background: '#193465',
   },
