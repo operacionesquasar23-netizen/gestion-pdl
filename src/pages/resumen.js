@@ -248,7 +248,7 @@ export default function Resumen() {
               {filtered.map((t, i) => {
                 const isAlterno = ESTADOS_ALTERNOS.includes(t.Estado)
                 return (
-                  <a key={i} href={`/seguimiento/${t.TicketID}`}
+                  <Link key={i} href={`/seguimiento/${t.TicketID}`}
                     className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-shadow block">
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div>
@@ -271,7 +271,7 @@ export default function Resumen() {
                     ) : (
                       <p className="text-xs text-red-500 italic">Requiere atención — {t.Estado}</p>
                     )}
-                  </a>
+                  </Link>
                 )
               })}
             </div>
