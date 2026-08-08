@@ -24,7 +24,6 @@ const ADMIN_PIN = 'op01'
 
 function diasEnEstado(fechaUltimoEstado) {
   if (!fechaUltimoEstado) return null
-  if (estado === 'Cerrado') return null
   const parts = fechaUltimoEstado.split('/').map(p => p.trim())
   if (parts.length < 3) return null
   const day = parseInt(parts[0])
