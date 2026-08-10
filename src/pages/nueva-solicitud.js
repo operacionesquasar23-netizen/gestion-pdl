@@ -6,7 +6,7 @@ import Link from 'next/link'
 const MAX_FILES = 10
 const MAX_MB = 20
 
-const EJECUTIVOS = ['Daniela','Franco','Maribed','Frecsia','Rafael','Ysmarly','Yessenia', 'Valeria', 'Victor']
+  const EJECUTIVOS = ['Daniela','Franco','Maribed','Camila','Rafael','Ysmarly','Yessenia', 'Valeria', 'Victor']
 const TIPOS = ['Visita Técnica','Habilitación de PDL']
 
 function FileIcon({ name }) {

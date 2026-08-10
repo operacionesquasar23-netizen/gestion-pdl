@@ -778,6 +778,7 @@ export default function Admin() {
                       <td className="px-4 py-3"><Badge estado={t.Estado} /></td>
                       <td className="px-4 py-3">
                         {(() => {
+                          if (t.Estado === 'Cerrado') return <span className="text-gray-300">—</span>
                           const dias = diasEnEstado(t.FechaUltimoEstado)
                           if (dias === null) return <span className="text-gray-300">—</span>
                           const color = dias > 7 ? 'text-red-600 font-bold' : dias > 3 ? 'text-amber-500 font-medium' : 'text-green-600'
