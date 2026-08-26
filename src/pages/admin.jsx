@@ -442,6 +442,7 @@ function Modal({ ticket, onClose, onUpdate }) {
                   <option value="Trabajo de altura">Trabajo de altura</option>
                   <option value="Cambio de toma">Cambio de toma</option>
                   <option value="Cambio de cable">Cambio de cable</option>
+                  <option value="En gondola">En gondola</option>
                 </select>
               </div>
               <div>
