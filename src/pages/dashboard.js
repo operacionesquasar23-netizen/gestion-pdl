@@ -78,10 +78,15 @@ function BarChart({ data, maxValue }) {
 export default function Dashboard() {
   const [tickets, setTickets] = useState([])
   const [loading, setLoading] = useState(true)
-  const [mes, setMes] = useState(new Date().getMonth())
-  const [anio, setAnio] = useState(new Date().getFullYear())
+  const [mounted, setMounted] = useState(false)
+  const [mes, setMes] = useState(0)
+  const [anio, setAnio] = useState(2025)
 
   useEffect(() => {
+    const now = new Date()
+    setMes(now.getMonth())
+    setAnio(now.getFullYear())
+    setMounted(true)
     fetchData()
   }, [])
 
@@ -160,10 +165,29 @@ export default function Dashboard() {
     color: p === 'CARZE' ? '#F97316' : '#14B8A6'
   }))
 
-  // Monto total cotizaciones
+  // Parsea montos que pueden llegar como número crudo (getValues() de Apps Script) o como texto "S/.1.655,00"
+  const parseMonto = (v) => {
+    if (v === null || v === undefined || v === '') return 0
+    if (typeof v === 'number') return isNaN(v) ? 0 : v   // ya es un número real, no tocar
+    const limpio = String(v)
+      .replace(/S\/\.?/gi, '')   // quita el prefijo S/. o S/
+      .trim()
+      .replace(/\./g, '')        // quita los puntos de separador de miles (solo aplica si es texto formateado)
+      .replace(',', '.')         // convierte la coma decimal en punto
+    const n = parseFloat(limpio)
+    return isNaN(n) ? 0 : n
+  }
+
+  // Estados donde la habilitación efectivamente se ejecutó (si no, el monto de habilitación no cuenta como gasto real)
+  const ESTADOS_HABILITACION_EJECUTADA = ['Habilitación realizada', 'Evidencias recibidas', 'Cerrado']
+
+  // Monto total cotizaciones: la visita siempre se cobra; la habilitación solo si el trabajo se realizó
+  // (ej: si el estado es "Rechazado por tienda", solo corresponde el costo de la visita)
   const montoTotal = ticketsMes.reduce((sum, t) => {
-    const m = parseFloat(t.MontoCotizacion) || 0
-    return sum + m
+    const montoVisita = parseMonto(t.MontoCotizacionVisita)
+    const habilitacionEjecutada = ESTADOS_HABILITACION_EJECUTADA.includes(t.Estado)
+    const montoHabilitacion = habilitacionEjecutada ? parseMonto(t.MontoCotizacionHabilitacion) : 0
+    return sum + montoVisita + montoHabilitacion
   }, 0)
 
   // Tiempo promedio de atención
@@ -218,19 +242,21 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-6">
 
           {/* Selector de mes */}
-          <div className="flex items-center gap-3">
-            <select value={mes} onChange={e => setMes(parseInt(e.target.value))}
-              className="border border-gray-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              {meses.map((m, i) => <option key={i} value={i}>{m}</option>)}
-            </select>
-            <select value={anio} onChange={e => setAnio(parseInt(e.target.value))}
-              className="border border-gray-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-              {[2025, 2026, 2027].map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
-            <span className="text-sm text-gray-400">{totalMes} solicitudes en {meses[mes]} {anio}</span>
-          </div>
+          {mounted && (
+            <div className="flex items-center gap-3">
+              <select value={mes} onChange={e => setMes(parseInt(e.target.value))}
+                className="border border-gray-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {meses.map((m, i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+              <select value={anio} onChange={e => setAnio(parseInt(e.target.value))}
+                className="border border-gray-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                {[2025, 2026, 2027].map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+              <span className="text-sm text-gray-400">{totalMes} solicitudes en {meses[mes]} {anio}</span>
+            </div>
+          )}
 
-          {loading ? (
+          {(!mounted || loading) ? (
             <div className="text-center py-16 text-gray-400">Cargando datos...</div>
           ) : (
             <>
