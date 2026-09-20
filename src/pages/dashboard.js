@@ -15,21 +15,29 @@ const ESTADOS_ORDER = [
   'Habilitación programada',
   'Habilitación realizada',
   'Evidencias recibidas',
+  'OC solicitada',
+  'Factura recibida',
+  'Factura y OC entregadas',
   'Cerrado',
+  'Rechazado por tienda',
 ]
 
 const ESTADO_COLORS = {
-  'Pendiente revisión':      '#F59E0B',
-  'Visita programada':       '#3B82F6',
-  'Visita realizada':        '#6366F1',
-  'Cotización enviada':      '#F97316',
-  'Cotización aprobada':     '#14B8A6',
-  'Cotización rechazada':    '#EF4444',
-  'En renegociación':        '#A855F7',
-  'Habilitación programada': '#06B6D4',
-  'Habilitación realizada':  '#84CC16',
-  'Evidencias recibidas':    '#10B981',
-  'Cerrado':                 '#22C55E',
+  'Pendiente revisión':        '#F59E0B',
+  'Visita programada':         '#3B82F6',
+  'Visita realizada':          '#6366F1',
+  'Cotización enviada':        '#F97316',
+  'Cotización aprobada':       '#14B8A6',
+  'Cotización rechazada':      '#EF4444',
+  'En renegociación':          '#A855F7',
+  'Habilitación programada':   '#06B6D4',
+  'Habilitación realizada':    '#84CC16',
+  'Evidencias recibidas':      '#10B981',
+  'OC solicitada':             '#EAB308',
+  'Factura recibida':          '#EC4899',
+  'Factura y OC entregadas':   '#8B5CF6',
+  'Cerrado':                   '#22C55E',
+  'Rechazado por tienda':      '#DC2626',
 }
 
 function StatCard({ label, value, sub, color = 'blue' }) {
@@ -40,6 +48,7 @@ function StatCard({ label, value, sub, color = 'blue' }) {
     purple: 'bg-purple-50 text-purple-800',
     teal:   'bg-teal-50 text-teal-800',
     orange: 'bg-orange-50 text-orange-800',
+    lime:   'bg-lime-50 text-lime-800',
   }
   return (
     <div className={`${colors[color]} rounded-2xl px-6 py-5`}>
@@ -75,12 +84,30 @@ function BarChart({ data, maxValue }) {
   )
 }
 
+const parseMonto = (v) => {
+  if (v === null || v === undefined || v === '') return 0
+  if (typeof v === 'number') return isNaN(v) ? 0 : v
+  const limpio = String(v).replace(/S\/\.?/gi, '').trim().replace(/\./g, '').replace(',', '.')
+  const n = parseFloat(limpio)
+  return isNaN(n) ? 0 : n
+}
+
+const parseFecha = (str) => {
+  if (!str) return null
+  const parts = str.split('/').map(p => p.trim())
+  if (parts.length < 3) return null
+  const day = parseInt(parts[0])
+  const month = parseInt(parts[1]) - 1
+  const year = parseInt(parts[2].split(',')[0].split(' ')[0])
+  return new Date(year, month, day)
+}
+
 export default function Dashboard() {
   const [tickets, setTickets] = useState([])
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
   const [mes, setMes] = useState(0)
-  const [anio, setAnio] = useState(2025)
+  const [anio, setAnio] = useState(2026)
 
   useEffect(() => {
     const now = new Date()
@@ -112,6 +139,7 @@ export default function Dashboard() {
 
   const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
 
+  // Filtra tickets creados en el mes seleccionado
   const ticketsMes = tickets.filter(t => {
     if (!t.FechaRequerimiento) return false
     const parts = t.FechaRequerimiento.split('/')
@@ -121,11 +149,11 @@ export default function Dashboard() {
     return tMes === mes && tAnio === anio
   })
 
-  // Métricas principales
   const totalMes = ticketsMes.length
   const cerradosMes = ticketsMes.filter(t => t.Estado === 'Cerrado').length
+  const habilitacionesMes = ticketsMes.filter(t => t.Estado === 'Habilitación realizada' || t.Estado === 'Evidencias recibidas' || t.Estado === 'OC solicitada' || t.Estado === 'Factura recibida' || t.Estado === 'Factura y OC entregadas' || t.Estado === 'Cerrado').length
 
-  // Por estado
+  // Por estado — usa el estado ACTUAL del ticket creado en el mes
   const porEstado = ESTADOS_ORDER.map(e => ({
     label: e,
     value: ticketsMes.filter(t => t.Estado === e).length,
@@ -139,6 +167,13 @@ export default function Dashboard() {
     value: ticketsMes.filter(t => t.Ejecutivo === e).length,
     color: '#3B82F6'
   })).sort((a, b) => b.value - a.value).filter(e => e.value > 0)
+
+  // Por región
+  const porRegion = ['Lima', 'Provincia'].map(r => ({
+    label: r,
+    value: ticketsMes.filter(t => t.Region === r || t['Región'] === r).length,
+    color: r === 'Lima' ? '#6366F1' : '#F97316'
+  }))
 
   // Por tienda
   const tiendas = [...new Set(ticketsMes.map(t => t.Tienda).filter(Boolean))]
@@ -156,8 +191,6 @@ export default function Dashboard() {
     color: '#F59E0B'
   })).sort((a, b) => b.value - a.value).slice(0, 8)
 
-  const maxCliente = Math.max(...porCliente.map(e => e.value), 1)
-
   // Por proveedor
   const porProveedor = ['CARZE', 'MPESSAC'].map(p => ({
     label: p,
@@ -165,24 +198,8 @@ export default function Dashboard() {
     color: p === 'CARZE' ? '#F97316' : '#14B8A6'
   }))
 
-  // Parsea montos que pueden llegar como número crudo (getValues() de Apps Script) o como texto "S/.1.655,00"
-  const parseMonto = (v) => {
-    if (v === null || v === undefined || v === '') return 0
-    if (typeof v === 'number') return isNaN(v) ? 0 : v   // ya es un número real, no tocar
-    const limpio = String(v)
-      .replace(/S\/\.?/gi, '')   // quita el prefijo S/. o S/
-      .trim()
-      .replace(/\./g, '')        // quita los puntos de separador de miles (solo aplica si es texto formateado)
-      .replace(',', '.')         // convierte la coma decimal en punto
-    const n = parseFloat(limpio)
-    return isNaN(n) ? 0 : n
-  }
+  const ESTADOS_HABILITACION_EJECUTADA = ['Habilitación realizada', 'Evidencias recibidas', 'OC solicitada', 'Factura recibida', 'Factura y OC entregadas', 'Cerrado']
 
-  // Estados donde la habilitación efectivamente se ejecutó (si no, el monto de habilitación no cuenta como gasto real)
-  const ESTADOS_HABILITACION_EJECUTADA = ['Habilitación realizada', 'Evidencias recibidas', 'Cerrado']
-
-  // Monto total cotizaciones: la visita siempre se cobra; la habilitación solo si el trabajo se realizó
-  // (ej: si el estado es "Rechazado por tienda", solo corresponde el costo de la visita)
   const montoTotal = ticketsMes.reduce((sum, t) => {
     const montoVisita = parseMonto(t.MontoCotizacionVisita)
     const habilitacionEjecutada = ESTADOS_HABILITACION_EJECUTADA.includes(t.Estado)
@@ -190,36 +207,16 @@ export default function Dashboard() {
     return sum + montoVisita + montoHabilitacion
   }, 0)
 
-  // Tiempo promedio de atención
-  const parseFecha = (str) => {
-    if (!str) return null
-    const parts = str.split('/').map(p => p.trim())
-    if (parts.length < 3) return null
-    const day = parseInt(parts[0])
-    const month = parseInt(parts[1]) - 1
-    const year = parseInt(parts[2].split(',')[0].split(' ')[0])
-    return new Date(year, month, day)
-  }
-
-  const cerrados = ticketsMes.filter(t => t.Estado === 'Cerrado' && t.FechaCierre && t.FechaRequerimiento)
-  const tiempoPromedio = cerrados.length > 0
-    ? Math.round(cerrados.reduce((sum, t) => {
-        const inicio = parseFecha(t.FechaRequerimiento)
-        const fin = parseFecha(t.FechaCierre)
-        if (!inicio || !fin) return sum
-        return sum + Math.max(0, (fin - inicio) / (1000 * 60 * 60 * 24))
-      }, 0) / cerrados.length)
-    : null
-
-  const maxEstado = Math.max(...porEstado.map(e => e.value), 1)
-  const maxEjec = Math.max(...porEjecutivo.map(e => e.value), 1)
-  const maxTienda = Math.max(...porTienda.map(e => e.value), 1)
+  const maxEstado  = Math.max(...porEstado.map(e => e.value), 1)
+  const maxEjec    = Math.max(...porEjecutivo.map(e => e.value), 1)
+  const maxRegion  = Math.max(...porRegion.map(e => e.value), 1)
+  const maxTienda  = Math.max(...porTienda.map(e => e.value), 1)
+  const maxCliente = Math.max(...porCliente.map(e => e.value), 1)
 
   return (
     <>
       <Head><title>Dashboard · PDL</title></Head>
       <div className="min-h-screen bg-slate-50">
-        {/* Header */}
         <div className="bg-brand text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/logo.png" alt="Quasar" className="w-10 h-10 rounded-full" />
@@ -241,7 +238,6 @@ export default function Dashboard() {
 
         <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-6">
 
-          {/* Selector de mes */}
           {mounted && (
             <div className="flex items-center gap-3">
               <select value={mes} onChange={e => setMes(parseInt(e.target.value))}
@@ -263,9 +259,23 @@ export default function Dashboard() {
               {/* Stats principales */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatCard label="Total del mes" value={totalMes} color="blue" />
-                <StatCard label="Cerrados" value={cerradosMes} sub={totalMes > 0 ? `${Math.round(cerradosMes/totalMes*100)}% del total` : ''} color="green" />
-                <StatCard label="Monto cotizaciones" value={`S/ ${montoTotal.toLocaleString('es-PE')}`} color="teal" />
-                <StatCard label="Tiempo promedio" value={tiempoPromedio !== null ? `${tiempoPromedio} días` : '—'} sub="de atención" color="purple" />
+                <StatCard
+                  label="Habilitaciones realizadas"
+                  value={habilitacionesMes}
+                  sub={totalMes > 0 ? `${Math.round(habilitacionesMes/totalMes*100)}% del total` : ''}
+                  color="lime"
+                />
+                <StatCard
+                  label="Cerrados"
+                  value={cerradosMes}
+                  sub={totalMes > 0 ? `${Math.round(cerradosMes/totalMes*100)}% del total` : ''}
+                  color="green"
+                />
+                <StatCard
+                  label="Monto cotizaciones"
+                  value={`S/ ${montoTotal.toLocaleString('es-PE')}`}
+                  color="teal"
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -285,6 +295,15 @@ export default function Dashboard() {
                   {porEjecutivo.length === 0
                     ? <p className="text-sm text-gray-400 text-center py-4">Sin datos este mes</p>
                     : <BarChart data={porEjecutivo} maxValue={maxEjec} />
+                  }
+                </div>
+
+                {/* Por región */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <h2 className="text-sm font-semibold text-gray-700 mb-4">🗺️ Por región</h2>
+                  {porRegion.every(r => r.value === 0)
+                    ? <p className="text-sm text-gray-400 text-center py-4">Sin datos este mes</p>
+                    : <BarChart data={porRegion} maxValue={maxRegion} />
                   }
                 </div>
 
