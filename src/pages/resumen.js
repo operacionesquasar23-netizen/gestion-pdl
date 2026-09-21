@@ -61,6 +61,9 @@ function ProgressBar({ estado }) {
 export default function Resumen() {
   const [tickets, setTickets] = useState([])
   const [loading, setLoading] = useState(true)
+  const [mes, setMes] = useState(new Date().getMonth())
+  const [anio, setAnio] = useState(new Date().getFullYear())
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
   const [filtroEstado, setFiltroEstado] = useState('Todos')
   const [filtroEjecutivo, setFiltroEjecutivo] = useState('Todos')
   const [buscar, setBuscar] = useState('')
@@ -87,6 +90,14 @@ export default function Resumen() {
 
   const ejecutivos = [...new Set(tickets.map(t => t.Ejecutivo).filter(Boolean))]
 
+  
+  const anios = [...new Set([
+    new Date().getFullYear(),
+    ...tickets
+      .map(t => parseInt((t.FechaRequerimiento || '').split('/')[2]))
+      .filter(Boolean)
+  ])].sort((a, b) => b - a)
+
   const filtered = tickets.filter(t => {
     const matchE = filtroEstado === 'Todos' || t.Estado === filtroEstado
     const matchEj = filtroEjecutivo === 'Todos' || t.Ejecutivo === filtroEjecutivo
@@ -96,7 +107,19 @@ export default function Resumen() {
       t.Tienda?.toLowerCase().includes(q) ||
       t.TicketID?.toLowerCase().includes(q) ||
       t.Asunto?.toLowerCase().includes(q)
-    return matchE && matchEj && matchQ
+
+    // Filtro por mes
+    let matchMes = true
+    if (t.FechaRequerimiento) {
+      const parts = t.FechaRequerimiento.split('/')
+      if (parts.length >= 3) {
+        const tMes = parseInt(parts[1]) - 1
+        const tAnio = parseInt(parts[2].split(',')[0].trim())
+        matchMes = (mes === -1 || tMes === mes) && (anio === -1 || tAnio === anio)
+      }
+    }
+
+    return matchE && matchEj && matchQ && matchMes
   })
 
   const descargarExcel = () => {
@@ -186,6 +209,18 @@ export default function Resumen() {
             <input value={buscar} onChange={e => setBuscar(e.target.value)}
               placeholder="Buscar por cliente, tienda, asunto o código..."
               className="border border-gray-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 min-w-[220px]" />
+            <select value={mes} onChange={e => setMes(parseInt(e.target.value))}
+            
+              className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value={-1}>Todos los meses</option>
+              {meses.map((m, i) => <option key={m} value={i}>{m}</option>)}
+            </select>
+
+            <select value={anio} onChange={e => setAnio(parseInt(e.target.value))}
+              className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value={-1}>Todos los años</option>
+              {anios.map(a => <option key={a} value={a}>{a}</option>)}
+            </select>
 
             <select value={filtroEjecutivo} onChange={e => setFiltroEjecutivo(e.target.value)}
               className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">

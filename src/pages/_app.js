@@ -1,15 +1,24 @@
 import '../styles/globals.css'
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Splash from '../components/Splash';
 
+// Rutas donde NO debe mostrarse la animación de inicio
+const RUTAS_SIN_SPLASH = ['/acta'];
+
 export default function App({ Component, pageProps }) {
-  const [showSplash, setShowSplash] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
+  const router = useRouter();
+  const sinSplash = RUTAS_SIN_SPLASH.includes(router.pathname);
+
+  const [showSplash, setShowSplash] = useState(!sinSplash);
+  const [fadeOut, setFadeOut] = useState(sinSplash);
   const [statusMsg, setStatusMsg] = useState('Iniciando...');
   const [videoNearEnd, setVideoNearEnd] = useState(false);
   const [dataReady, setDataReady] = useState(false);
 
   useEffect(() => {
+    if (sinSplash) return;
+
     async function init() {
       setStatusMsg('Verificando sesión...');
       await new Promise(r => setTimeout(r, 1500));
@@ -20,7 +29,7 @@ export default function App({ Component, pageProps }) {
       setDataReady(true);
     }
     init();
-  }, []);
+  }, [sinSplash]);
 
   useEffect(() => {
     if (dataReady && videoNearEnd && !fadeOut) {

@@ -22,6 +22,18 @@ const ESTADOS = [
 
 const ADMIN_PIN = 'op01'
 
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Setiembre','Octubre','Noviembre','Diciembre']
+
+// mes = -1 o anio = -1 significa "Todos"
+function coincideFecha(fecha, mes, anio) {
+  if (!fecha) return true
+  const parts = fecha.split('/').map(p => p.trim())
+  if (parts.length < 3) return true
+  const tMes = parseInt(parts[1]) - 1
+  const tAnio = parseInt(parts[2].split(',')[0].split(' ')[0])
+  return (mes === -1 || tMes === mes) && (anio === -1 || tAnio === anio)
+}
+
 function diasEnEstado(fechaUltimoEstado) {
   if (!fechaUltimoEstado) return null
   const parts = fechaUltimoEstado.split('/').map(p => p.trim())
@@ -614,6 +626,8 @@ export default function Admin() {
   const [filtroEstado, setFiltroEstado] = useState('Todos')
   const [buscar, setBuscar] = useState('')
   const [selected, setSelected] = useState(null)
+  const [mes, setMes] = useState(new Date().getMonth())
+  const [anio, setAnio] = useState(new Date().getFullYear())
 
   const checkPin = () => {
     if (pin === ADMIN_PIN) { setAuth(true); setPinErr('') }
@@ -669,18 +683,27 @@ export default function Admin() {
     </div>
   )
 
+  const anios = [...new Set([
+    new Date().getFullYear(),
+    ...tickets
+      .map(t => parseInt((t.FechaRequerimiento || '').split('/')[2]))
+      .filter(Boolean)
+  ])].sort((a, b) => b - a)
+
   const filtered = tickets.filter(t => {
     const matchE = filtroEstado === 'Todos' || t.Estado === filtroEstado
     const q = buscar.toLowerCase()
     const matchQ = !q || t.Cliente?.toLowerCase().includes(q) || t.Tienda?.toLowerCase().includes(q) || t.TicketID?.toLowerCase().includes(q) || t.Ejecutivo?.toLowerCase().includes(q) || t.Asunto?.toLowerCase().includes(q)
-    return matchE && matchQ
+    const matchF = coincideFecha(t.FechaRequerimiento, mes, anio)
+    return matchE && matchQ && matchF
   })
 
+  const delPeriodo = tickets.filter(t => coincideFecha(t.FechaRequerimiento, mes, anio))
   const stats = {
-    total: tickets.length,
-    pendiente: tickets.filter(t => t.Estado === 'Pendiente revisión').length,
-    proceso: tickets.filter(t => !['Pendiente revisión','Cerrado','Cotización rechazada'].includes(t.Estado)).length,
-    completado: tickets.filter(t => t.Estado === 'Cerrado').length,
+    total: delPeriodo.length,
+    pendiente: delPeriodo.filter(t => t.Estado === 'Pendiente revisión').length,
+    proceso: delPeriodo.filter(t => !['Pendiente revisión','Cerrado','Cotización rechazada'].includes(t.Estado)).length,
+    completado: delPeriodo.filter(t => t.Estado === 'Cerrado').length,
   }
 
   return (
@@ -735,6 +758,17 @@ export default function Admin() {
             <input value={buscar} onChange={e => setBuscar(e.target.value)}
               placeholder="Buscar por cliente, tienda, ejecutivo, código, asunto..."
               className="border border-gray-200 rounded-xl px-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-80" />
+            <select value={mes} onChange={e => setMes(parseInt(e.target.value))}
+              className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value={-1}>Todos los meses</option>
+              {MESES.map((m, i) => <option key={m} value={i}>{m}</option>)}
+            </select>
+
+            <select value={anio} onChange={e => setAnio(parseInt(e.target.value))}
+              className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value={-1}>Todos los años</option>
+              {anios.map(a => <option key={a} value={a}>{a}</option>)}
+            </select>
             <div className="flex gap-2 flex-wrap">
               {['Todos', ...ESTADOS.map(s => s.id)].map(s => (
                 <button key={s} onClick={() => setFiltroEstado(s)}
