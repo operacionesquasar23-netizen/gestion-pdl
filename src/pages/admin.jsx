@@ -172,6 +172,7 @@ function Modal({ ticket, onClose, onUpdate }) {
   const [razonSocial, setRazonSocial] = useState(ticket.RazonSocial || '')
   const [nochero, setNochero] = useState(ticket.Nochero || '')
   const [costoNochero, setCostoNochero] = useState(ticket.CostoNochero || '')
+  const [cantPDL, setCantPDL] = useState(ticket.CantPDL || '')
   const [docsProveedor, setDocsProveedor] = useState(ticket.DocsProveedor || '')
   const [nuevosDocsProveedor, setNuevosDocsProveedor] = useState([])
   const [nuevosArchivosEjecutivo, setNuevosArchivosEjecutivo] = useState([])
@@ -248,6 +249,7 @@ function Modal({ ticket, onClose, onUpdate }) {
         RazonSocial: razonSocial,
         Nochero: nochero,
         CostoNochero: costoNochero,
+        CantPDL: cantPDL,
         DocsProveedor: newDocsProveedor,
         DatosAdjuntos: newDatosAdjuntos,
       })
@@ -432,6 +434,12 @@ function Modal({ ticket, onClose, onUpdate }) {
                 <label className="block text-xs text-gray-600 mb-1">Costo Nochero (S/)</label>
                 <input value={costoNochero} onChange={e => setCostoNochero(e.target.value)}
                   type="number" placeholder="Ej: 150"
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">Cant. de PDL</label>
+                <input value={cantPDL} onChange={e => setCantPDL(e.target.value)}
+                  type="number" placeholder="Ej: 3"
                   className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
